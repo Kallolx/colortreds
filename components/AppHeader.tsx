@@ -1,4 +1,5 @@
-import { StyleSheet, Text, View } from 'react-native';
+import React from 'react';
+import { Image, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 interface AppHeaderProps {
@@ -8,16 +9,32 @@ interface AppHeaderProps {
 export default function AppHeader({ userBalance }: AppHeaderProps) {
   const insets = useSafeAreaInsets();
 
+  // Helper to convert English digits to Bengali
+  const toBengaliNumber = (num: number) =>
+    num
+      .toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+      .replace(/\d/g, d => '০১২৩৪৫৬৭৮৯'[parseInt(d)]);
+
   return (
-    <View style={[styles.header, { paddingTop: insets.top + 0 }]}>
-      <View style={styles.headerLeft}>
-        <View style={styles.logoContainer}>
-          <Text style={[styles.logoText, { color: '#000000' }]}>ColorTrades</Text>
+    <View style={[styles.header, { paddingTop: insets.top + 16 }]}>
+      <View style={styles.headerContent}>
+        {/* Logo Section */}
+        <View style={styles.logoSection}>
+          <Image 
+            source={require('../assets/images/app-logo.png')} 
+            style={styles.logoImage} 
+            resizeMode="contain" 
+          />
         </View>
-      </View>
-      <View style={styles.headerRight}>
-        <Text style={styles.balanceLabel}>Balance</Text>
-        <Text style={styles.balanceAmount}>${userBalance.toFixed(2)}</Text>
+
+        {/* Balance Section */}
+        <View style={styles.balanceSection}>
+          <View style={styles.balanceContainer}>
+            <Text style={styles.balanceAmount}>
+              ৳{toBengaliNumber(userBalance)}
+            </Text>
+          </View>
+        </View>
       </View>
     </View>
   );
@@ -25,43 +42,46 @@ export default function AppHeader({ userBalance }: AppHeaderProps) {
 
 const styles = StyleSheet.create({
   header: {
-    backgroundColor: '#fff',
-    padding: 16,
+    backgroundColor: '#ff8c00',
+    paddingHorizontal: 10,
+    paddingBottom: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: '#f0f0f0',
+    borderBottomLeftRadius: 24,
+    borderBottomRightRadius: 24,
+  },
+  headerContent: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    borderBottomWidth: 1,
-    borderBottomColor: '#e0e0e0',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
   },
-  headerLeft: {
-    flex: 1,
+  logoSection: {
+
+    justifyContent: 'flex-start',
   },
-  logoContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
+  logoImage: {
+    height: 38, // Fixed height, width will adjust based on aspect ratio
+    maxWidth: 200, // Maximum width to prevent it from being too large
   },
-  logoText: {
-    fontSize: 24,
-    fontFamily: 'Outfit-Bold',
-    marginTop: 8,
-  },
-  headerRight: {
+  balanceSection: {
     alignItems: 'flex-end',
   },
-  balanceLabel: {
-    fontSize: 12,
-    fontFamily: 'Outfit-Regular',
-    color: '#666',
-    marginBottom: 2,
+  balanceContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#eb01f6',
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    paddingEnd: 12,
+    borderRadius: 25,
+    borderWidth: 2,
+    borderColor: '#ffffff',
   },
   balanceAmount: {
     fontSize: 18,
-    fontFamily: 'Outfit-Bold',
-    color: '#007AFF',
+    fontFamily: 'HindSiliguri-Bold',
+    color: '#ffffff',
+    marginLeft: 6,
+    letterSpacing: 0.5,
   },
 });

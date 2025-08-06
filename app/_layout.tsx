@@ -18,7 +18,10 @@ export default function RootLayout() {
     'Outfit-Medium': require('../assets/fonts/Outfit-Medium.ttf'),
     'Outfit-SemiBold': require('../assets/fonts/Outfit-SemiBold.ttf'),
     'Outfit-Bold': require('../assets/fonts/Outfit-Bold.ttf'),
-    SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
+    'HindSiliguri-Regular': require('../assets/fonts/HindSiliguri-Regular.ttf'),
+    'HindSiliguri-Medium': require('../assets/fonts/HindSiliguri-Medium.ttf'),
+    'HindSiliguri-SemiBold': require('../assets/fonts/HindSiliguri-SemiBold.ttf'),
+    'HindSiliguri-Bold': require('../assets/fonts/HindSiliguri-Bold.ttf'),
   });
 
   useEffect(() => {

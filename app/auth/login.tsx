@@ -1,14 +1,54 @@
 import { useRouter } from 'expo-router';
-import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import React, { useEffect, useRef } from 'react';
+import {
+  Animated,
+  Dimensions,
+  Easing,
+  Image,
+  ImageBackground,
+  SafeAreaView,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View
+} from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+
+const { width, height } = Dimensions.get('window');
 
 export default function LoginScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
+  const rotationValue = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    const startRotation = () => {
+      Animated.loop(
+        Animated.timing(rotationValue, {
+          toValue: 1,
+          duration: 4000, // 4 seconds for smooth rotation
+          useNativeDriver: true,
+          easing: Easing.linear, // Linear easing for constant speed
+        })
+      ).start();
+    };
+
+    startRotation();
+  }, [rotationValue]);
+
+  const rotate = rotationValue.interpolate({
+    inputRange: [0, 1],
+    outputRange: ['0deg', '360deg'],
+  });
 
   const handleLogin = () => {
     // TODO: Implement login logic
     router.replace('/(tabs)');
+  };
+
+  const handleBack = () => {
+    router.back();
   };
 
   const navigateToSignup = () => {
@@ -17,46 +57,96 @@ export default function LoginScreen() {
 
   return (
     <View style={styles.container}>
-      {/* Top curved section with yellow background */}
-      <View style={[styles.topSection, { paddingTop: insets.top }]}>
-        <View style={styles.brandContainer}>
-          <View style={styles.logoIcon}>
-            <View style={styles.logoInner} />
-          </View>
-        </View>
-      </View>
-
-      {/* Bottom white section with form */}
-      <View style={styles.bottomSection}>
-        <ScrollView 
-          style={styles.scrollContainer}
-          contentContainerStyle={[styles.scrollContent, { paddingBottom: insets.bottom + 20 }]}
-          showsVerticalScrollIndicator={false}
-        >
-          <View style={styles.formContainer}>
-            <Text style={styles.appTitle}>ColorTrade</Text>
-            <Text style={styles.subtitle}>Daily Color Racing - Login to continue</Text>
+      {/* Background Image */}
+      <ImageBackground
+        source={require('../../assets/images/onboarding-bg.png')}
+        style={styles.backgroundImage}
+        resizeMode="cover"
+      >
+        <SafeAreaView style={styles.safeArea}>
+          {/* Top Section with Back Button and Logo */}
+          <View style={styles.topSection}>
+            {/* Back Button at top */}
+            <TouchableOpacity style={styles.backButton} onPress={handleBack}>
+              <Text>
+                <Text style={styles.arrowIcon}>‹ </Text>
+              </Text> 
+            </TouchableOpacity>
             
-            <View style={styles.form}>
-              <View style={styles.inputContainer}>
-                <Text style={styles.placeholder}>Enter your email</Text>
-              </View>
-              
-              <View style={styles.inputContainer}>
-                <Text style={styles.placeholder}>Enter your password</Text>
-              </View>
-              
-              <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
-                <Text style={styles.loginButtonText}>Log In</Text>
-              </TouchableOpacity>
-              
-              <TouchableOpacity style={styles.signupButton} onPress={navigateToSignup}>
-                <Text style={styles.signupButtonText}>Sign Up</Text>
-              </TouchableOpacity>
+            {/* Logo centered with rotation */}
+            <View style={styles.logoContainer}>
+              <Animated.Image
+                source={require('../../assets/images/logo.png')}
+                style={[styles.topLogo, { transform: [{ rotate }] }]}
+                resizeMode="contain"
+              />
             </View>
           </View>
-        </ScrollView>
-      </View>
+
+          {/* Bottom Content Section */}
+          <View style={styles.bottomSection}>
+            {/* Login Title */}
+            <Text style={styles.loginTitle}>লগ ইন</Text>
+            
+            {/* Subtitle */}
+            <Text style={styles.subtitle}>
+              আপনার সুবর্ণ একটি আকাউন্ট লগ ইন করুন
+            </Text>
+
+            {/* Login Form */}
+            <View style={styles.form}>
+              {/* Email Input */}
+              <View style={styles.inputGroup}>
+                <Text style={styles.inputLabel}>নম্বর বা ইমেইল</Text>
+                <TextInput
+                  style={styles.textInput}
+                  placeholder="মোবাইল নম্বর বা ইমেইল ঠিকানা লিখুন"
+                  placeholderTextColor="#666"
+                  keyboardType="email-address"
+                  autoCapitalize="none"
+                />
+              </View>
+              
+              {/* Password Input */}
+              <View style={styles.inputGroup}>
+                <Text style={styles.inputLabel}>পাসওয়ার্ড</Text>
+                <TextInput
+                  style={styles.textInput}
+                  placeholder="৮ সংখ্যার পাসওয়ার্ড লিখুন"
+                  placeholderTextColor="#666"
+                  secureTextEntry
+                  autoCapitalize="none"
+                />
+                <TouchableOpacity style={styles.forgotPassword}>
+                  <Text style={styles.forgotPasswordText}>পাসওয়ার্ড ভুলে গেছি</Text>
+                </TouchableOpacity>
+              </View>
+              
+              {/* Login Button */}
+              <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
+                <Text style={styles.loginButtonText}>লগ ইন</Text>
+              </TouchableOpacity>
+              
+              {/* Signup Link */}
+              <View style={styles.signupContainer}>
+                <Text style={styles.signupText}>একটি অ্যাকাউন্ট নেই? </Text>
+                <TouchableOpacity onPress={navigateToSignup}>
+                  <Text style={styles.signupLink}>সাইন আপ করুন</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+
+            {/* Bottom Logo */}
+            <View style={styles.bottomLogoContainer}>
+              <Image
+                source={require('../../assets/images/victor-logo.png')}
+                style={styles.bottomLogo}
+                resizeMode="contain"
+              />
+            </View>
+          </View>
+        </SafeAreaView>
+      </ImageBackground>
     </View>
   );
 }
@@ -64,119 +154,142 @@ export default function LoginScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f5f5f5',
   },
-  topSection: {
-    flex: 0.35,
-    backgroundColor: '#FFD700',
-    justifyContent: 'center',
-    alignItems: 'center',
-    position: 'relative',
+  backgroundImage: {
+    flex: 1,
+    width: '100%',
+    height: '100%',
   },
-  brandContainer: {
-    alignItems: 'center',
-  },
-  logoIcon: {
-    width: 80,
-    height: 80,
-    backgroundColor: '#fff',
-    borderRadius: 40,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: 20,
-    elevation: 8,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
-  },
-  logoInner: {
-    width: 50,
-    height: 50,
-    backgroundColor: '#8A2BE2',
-    borderRadius: 25,
-  },
-  bottomSection: {
-    flex: 0.65,
-    backgroundColor: '#fff',
-    borderTopLeftRadius: 60,
-    borderTopRightRadius: 60,
-    marginTop: -30,
-    elevation: 10,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: -3 },
-    shadowOpacity: 0.1,
-    shadowRadius: 10,
-  },
-  scrollContainer: {
+  safeArea: {
     flex: 1,
   },
-  scrollContent: {
-    flexGrow: 1,
-    paddingTop: 40,
+  topSection: {
+    flex: 0.4,
+    paddingHorizontal: 20,
+    paddingTop: 50,
   },
-  formContainer: {
+  backButton: {
+    paddingHorizontal: 0,
+    paddingVertical: 0,
+    backgroundColor: 'transparent',
+    borderWidth: 0,
+    elevation: 0,
+    shadowOpacity: 0,
+  },
+
+  arrowIcon: {
+    fontSize: 48,
+    color: '#000',
+    fontWeight: 'bold',
+    textAlign: 'left',
+    lineHeight: 52,
+  },
+  logoContainer: {
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  topLogo: {
+    width: 120,
+    height: 120,
+  },
+  bottomSection: {
+    flex: 0.6,
+    justifyContent: 'flex-end',
     paddingHorizontal: 30,
-    minHeight: '100%',
+    paddingBottom: 0,
   },
-  appTitle: {
-    fontSize: 32,
-    fontFamily: 'Outfit-Bold',
-    color: '#333',
-    textAlign: 'center',
-    marginBottom: 8,
+  loginTitle: {
+    fontSize: 36,
+    color: '#000',
+    textAlign: 'left',
+    alignSelf: 'flex-start',
+    fontFamily: 'HindSiliguri-Bold',
   },
   subtitle: {
     fontSize: 16,
-    fontFamily: 'Outfit-Regular',
-    color: '#666',
-    textAlign: 'center',
-    marginBottom: 40,
+    color: '#333',
+    textAlign: 'left',
+    alignSelf: 'flex-start',
+    marginBottom: 20,
+    fontFamily: 'HindSiliguri-Medium',
   },
   form: {
-    gap: 20,
+    marginBottom: 15,
   },
-  inputContainer: {
-    backgroundColor: '#f8f9fa',
-    borderRadius: 25,
-    paddingHorizontal: 20,
-    paddingVertical: 18,
-    borderWidth: 1,
-    borderColor: '#e9ecef',
+  inputGroup: {
+    marginBottom: 15,
   },
-  placeholder: {
-    color: '#6c757d',
+  inputLabel: {
     fontSize: 16,
-    fontFamily: 'Outfit-Regular',
+    color: '#000',
+    marginBottom: 5,
+    fontFamily: 'HindSiliguri-Bold',
+  },
+  textInput: {
+    backgroundColor: 'rgba(255, 255, 255, 0.8)',
+    borderWidth: 1,
+    borderColor: '#000',
+    borderRadius: 25,
+    paddingVertical: 15,
+    paddingHorizontal: 22,
+    fontSize: 16,
+    fontFamily: 'HindSiliguri-Medium',
+  },
+  forgotPassword: {
+    alignSelf: 'flex-end',
+    marginTop: 5,
+  },
+  forgotPasswordText: {
+    color: '#eb01f6',
+    fontSize: 14,
+    fontFamily: 'HindSiliguri-Bold',
+    textDecorationLine: 'underline',
   },
   loginButton: {
-    backgroundColor: '#8A2BE2',
+    backgroundColor: '#eb01f6',
     borderRadius: 25,
-    paddingVertical: 18,
-    marginTop: 10,
+    paddingVertical: 15,
+    paddingHorizontal: 40,
+    width: '100%',
+    alignItems: 'center',
     elevation: 3,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.2,
     shadowRadius: 4,
+    borderWidth: 1,
+    borderColor: '#000',
   },
   loginButtonText: {
-    color: '#fff',
+    color: '#FFFFFF',
     fontSize: 18,
-    fontFamily: 'Outfit-SemiBold',
-    textAlign: 'center',
+    fontFamily: 'HindSiliguri-Bold',
   },
-  signupButton: {
-    borderWidth: 2,
-    borderColor: '#FF8C00',
-    borderRadius: 25,
-    paddingVertical: 16,
+  signupContainer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
     marginTop: 15,
+    flexWrap: 'wrap',
   },
-  signupButtonText: {
-    color: '#FF8C00',
-    fontSize: 18,
-    fontFamily: 'Outfit-SemiBold',
-    textAlign: 'center',
+  signupText: {
+    color: '#333',
+    fontSize: 16,
+    fontFamily: 'HindSiliguri-Medium',
+  },
+  signupLink: {
+    color: '#eb01f6',
+    fontSize: 16,
+    fontFamily: 'HindSiliguri-Bold',
+    textDecorationLine: 'underline',
+  },
+  bottomLogoContainer: {
+    alignItems: 'center',
+    marginTop: 15,
+    paddingBottom: 10,
+  },
+  bottomLogo: {
+    width: width * 0.4,
+    height: 35,
   },
 });
