@@ -4,9 +4,10 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 interface AppHeaderProps {
   userBalance: number;
+  activeTab: 'trade' | 'wallet' | 'profile';
 }
 
-export default function AppHeader({ userBalance }: AppHeaderProps) {
+export default function AppHeader({ userBalance, activeTab }: AppHeaderProps) {
   const insets = useSafeAreaInsets();
 
   // Helper to convert English digits to Bengali
@@ -15,16 +16,55 @@ export default function AppHeader({ userBalance }: AppHeaderProps) {
       .toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
       .replace(/\d/g, d => '০১২৩৪৫৬৭৮৯'[parseInt(d)]);
 
+  // Get page title and icon based on active tab
+  const getPageContent = () => {
+    switch (activeTab) {
+      case 'wallet':
+        return {
+          title: 'ওয়ালেট',
+          icon: (
+            <Image 
+              source={require('../assets/images/logo.png')} 
+              style={styles.pageIcon} 
+              resizeMode="contain" 
+            />
+          )
+        };
+      case 'profile':
+        return {
+          title: 'প্রোফাইল',
+          icon: (
+            <Image 
+              source={require('../assets/images/logo.png')} 
+              style={styles.pageIcon} 
+              resizeMode="contain" 
+            />
+          )
+        };
+      default:
+        return null; // Show logo for trade/home page
+    }
+  };
+
+  const pageContent = getPageContent();
+
   return (
     <View style={[styles.header, { paddingTop: insets.top + 16 }]}>
       <View style={styles.headerContent}>
-        {/* Logo Section */}
+        {/* Logo/Title Section */}
         <View style={styles.logoSection}>
-          <Image 
-            source={require('../assets/images/app-logo.png')} 
-            style={styles.logoImage} 
-            resizeMode="contain" 
-          />
+          {pageContent ? (
+            <View style={styles.titleContainer}>
+              {pageContent.icon}
+              <Text style={styles.pageTitle}>{pageContent.title}</Text>
+            </View>
+          ) : (
+            <Image 
+              source={require('../assets/images/app-logo.png')} 
+              style={styles.logoImage} 
+              resizeMode="contain" 
+            />
+          )}
         </View>
 
         {/* Balance Section */}
@@ -56,12 +96,27 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   logoSection: {
-
     justifyContent: 'flex-start',
   },
   logoImage: {
     height: 38, // Fixed height, width will adjust based on aspect ratio
     maxWidth: 200, // Maximum width to prevent it from being too large
+  },
+  pageIcon: {
+    width: 38,
+    height: 38,
+  },
+  titleContainer: {
+    flexDirection: 'row',
+    marginLeft: 6,
+    alignItems: 'center',
+    gap: 2,
+  },
+  pageTitle: {
+    fontSize: 24,
+    fontFamily: 'HindSiliguri-Bold',
+    color: '#ffffff',
+    textAlign: 'left',
   },
   balanceSection: {
     alignItems: 'flex-end',

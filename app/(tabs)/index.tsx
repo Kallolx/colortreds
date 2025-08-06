@@ -40,7 +40,7 @@ export default function MainApp() {
   return (
     <View style={styles.container}>
       {/* Fixed App Header */}
-      <AppHeader userBalance={userBalance} />
+      <AppHeader userBalance={userBalance} activeTab={activeTab} />
       
       {/* Dynamic Content Area */}
       <View style={styles.contentContainer}>

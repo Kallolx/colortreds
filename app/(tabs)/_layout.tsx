@@ -6,7 +6,7 @@ export default function TabLayout() {
     <Tabs
       screenOptions={{
         headerShown: false,
-        tabBarStyle: { display: 'none' }, // Hide the default tab bar
+        tabBarStyle: { display: 'none' },
       }}>
       <Tabs.Screen
         name="index"

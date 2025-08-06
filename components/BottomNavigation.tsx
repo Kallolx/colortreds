@@ -173,7 +173,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     paddingVertical: 8,
     paddingHorizontal: 20,
-    paddingBottom: 2,
+    paddingBottom: 10,
     borderTopLeftRadius: 24,
     borderTopRightRadius: 24,
     shadowColor: "#000",
@@ -206,13 +206,12 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
   },
   activeMiddleNavItem: {
-    // No background for active middle item as it has circular container
   },
   circularIconContainer: {
-    width: 64, // Increased from 56
-    height: 64, // Increased from 56
-    borderRadius: 32, // Adjusted for new size
-    backgroundColor: "#ff8c00", // Normal orange (same as nav background)
+    width: 64, 
+    height: 64, 
+    borderRadius: 32, 
+    backgroundColor: "#ff8c00", 
     alignItems: "center",
     justifyContent: "center",
     marginBottom: 4,
@@ -225,7 +224,7 @@ const styles = StyleSheet.create({
     borderColor: "#ffffff",
   },
   activeCircularIconContainer: {
-    backgroundColor: "#ff8c00", // Keep same normal orange even when active
+    backgroundColor: "#ff8c00", 
     transform: [{ scale: 1.15 }],
     borderColor: "#ffffff",
   },

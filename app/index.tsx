@@ -1,16 +1,18 @@
 import { useRouter } from 'expo-router';
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
+  ActivityIndicator,
   Animated,
   Dimensions,
+  Easing,
   Image,
   ImageBackground,
+  Modal,
   SafeAreaView,
   StyleSheet,
   Text,
   TouchableOpacity,
-  View,
-  Easing
+  View
 } from 'react-native';
 
 const { width, height } = Dimensions.get('window');
@@ -18,6 +20,44 @@ const { width, height } = Dimensions.get('window');
 export default function OnboardingScreen() {
   const router = useRouter();
   const rotationValue = useRef(new Animated.Value(0)).current;
+  const [showSplash, setShowSplash] = useState(true);
+  const [isConnected, setIsConnected] = useState(true);
+  const [showNoInternetModal, setShowNoInternetModal] = useState(false);
+
+  // Check internet connectivity
+  const checkInternetConnection = async () => {
+    try {
+      // Simple fetch test to check connectivity
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 5000);
+      
+      const response = await fetch('https://www.google.com', {
+        method: 'HEAD',
+        signal: controller.signal,
+      });
+      
+      clearTimeout(timeoutId);
+      setIsConnected(response.ok);
+      if (!response.ok) {
+        setShowNoInternetModal(true);
+      }
+    } catch (error) {
+      console.log('Error checking internet:', error);
+      setIsConnected(false);
+      setShowNoInternetModal(true);
+    }
+  };
+
+  useEffect(() => {
+    // Start splash screen timer and internet check
+    const splashTimer = setTimeout(() => {
+      setShowSplash(false);
+    }, 4000); // 4 seconds
+
+    checkInternetConnection();
+
+    return () => clearTimeout(splashTimer);
+  }, []);
 
   useEffect(() => {
     const startRotation = () => {
@@ -46,6 +86,37 @@ export default function OnboardingScreen() {
   const handleSignup = () => {
     router.push('/auth/signup');
   };
+
+  const handleCloseModal = () => {
+    setShowNoInternetModal(false);
+  };
+
+  // Splash Screen Component
+  if (showSplash) {
+    return (
+      <View style={styles.splashContainer}>
+        <View style={styles.splashContent}>
+          <Image
+            source={require('../assets/images/logo.png')}
+            style={styles.splashLogo}
+            resizeMode="contain"
+          />
+          <Text style={styles.splashTitle}>ColourTrade</Text>
+          <View style={styles.loadingContainer}>
+            <ActivityIndicator size={40} color="#FFD700" />
+            <Text style={styles.loadingText}>Checking connection...</Text>
+          </View>
+        </View>
+        <View style={styles.splashBottomLogoContainer}>
+          <Image
+            source={require('../assets/images/victor-logo.png')}
+            style={styles.splashBottomLogo}
+            resizeMode="contain"
+          />
+        </View>
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container}>
@@ -106,6 +177,26 @@ export default function OnboardingScreen() {
           </View>
         </SafeAreaView>
       </ImageBackground>
+
+      {/* No Internet Modal */}
+      <Modal
+        animationType="fade"
+        transparent={true}
+        visible={showNoInternetModal}
+        onRequestClose={handleCloseModal}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContent}>
+            <Text style={styles.modalTitle}>No Internet Connection</Text>
+            <Text style={styles.modalMessage}>
+              Please check your internet connection and try again.
+            </Text>
+            <TouchableOpacity style={styles.modalButton} onPress={handleCloseModal}>
+              <Text style={styles.modalButtonText}>Close</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 }
@@ -202,5 +293,95 @@ const styles = StyleSheet.create({
   bottomLogo: {
     width: width * 0.5,
     height: (width * 0.5) * 300 / 1060,
+  },
+  // Splash Screen Styles
+  splashContainer: {
+    flex: 1,
+    backgroundColor: '#FFFFFF',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  splashContent: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  splashLogo: {
+    width: 150,
+    height: 150,
+    marginBottom: 20,
+  },
+  splashTitle: {
+    fontSize: 32,
+    fontFamily: 'Outfit-Bold',
+    color: '#333333',
+    marginBottom: 40,
+  },
+  loadingContainer: {
+    alignItems: 'center',
+    gap: 15,
+  },
+  loadingText: {
+    fontSize: 16,
+    fontFamily: 'HindSiliguri-Medium',
+    color: '#666666',
+  },
+  splashBottomLogoContainer: {
+    alignItems: 'center',
+    marginBottom: 20,
+    paddingBottom: 10,
+  },
+  splashBottomLogo: {
+    width: width * 0.5,
+    height: (width * 0.5) * 300 / 1060,
+  },
+  // Modal Styles
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: 30,
+  },
+  modalContent: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 20,
+    padding: 30,
+    alignItems: 'center',
+    width: '100%',
+    maxWidth: 350,
+    elevation: 10,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 5 },
+    shadowOpacity: 0.3,
+    shadowRadius: 10,
+  },
+  modalTitle: {
+    fontSize: 20,
+    fontFamily: 'Outfit-Bold',
+    color: '#333333',
+    marginBottom: 15,
+    textAlign: 'center',
+  },
+  modalMessage: {
+    fontSize: 16,
+    fontFamily: 'HindSiliguri-Medium',
+    color: '#666666',
+    textAlign: 'center',
+    lineHeight: 22,
+    marginBottom: 25,
+  },
+  modalButton: {
+    backgroundColor: '#eb01f6',
+    borderRadius: 15,
+    paddingVertical: 12,
+    paddingHorizontal: 30,
+    minWidth: 100,
+    alignItems: 'center',
+  },
+  modalButtonText: {
+    color: '#FFFFFF',
+    fontSize: 16,
+    fontFamily: 'HindSiliguri-Bold',
   },
 });
