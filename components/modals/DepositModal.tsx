@@ -1,14 +1,25 @@
-import { Ionicons } from '@expo/vector-icons';
-import * as Clipboard from 'expo-clipboard';
-import { useState } from 'react';
-import { Alert, Dimensions, Modal, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { Ionicons } from "@expo/vector-icons";
+import * as Clipboard from "expo-clipboard";
+import { useState } from "react";
+import { Image } from "expo-image";
+import {
+  Alert,
+  Dimensions,
+  Modal,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from "react-native";
 
-const { height: screenHeight } = Dimensions.get('window');
+const { height: screenHeight } = Dimensions.get("window");
 
 interface PaymentMethod {
   id: string;
   name: string;
-  type: 'mobile' | 'card';
+  type: "mobile" | "card";
   icon: string;
 }
 
@@ -26,110 +37,159 @@ interface DepositModalProps {
   onSubmit: (data: DepositData) => void;
 }
 
-export default function DepositModal({ visible, paymentMethod, onClose, onSubmit }: DepositModalProps) {
-  const [amount, setAmount] = useState('');
-  const [userNumber, setUserNumber] = useState('');
-  const [transactionId, setTransactionId] = useState('');
-  const [screenshot, setScreenshot] = useState('');
+export default function DepositModal({
+  visible,
+  paymentMethod,
+  onClose,
+  onSubmit,
+}: DepositModalProps) {
+  const [amount, setAmount] = useState("");
+  const [userNumber, setUserNumber] = useState("");
+  const [transactionId, setTransactionId] = useState("");
+  const [screenshot, setScreenshot] = useState("");
 
   // Example numbers for each method
-  let merchantNumber = '';
+  let merchantNumber = "";
   switch (paymentMethod?.id) {
-    case 'bkash':
-      merchantNumber = '01711223344';
+    case "bkash":
+      merchantNumber = "01711223344";
       break;
-    case 'nagad':
-      merchantNumber = '01755667788';
+    case "nagad":
+      merchantNumber = "01755667788";
       break;
-    case 'rocket':
-      merchantNumber = '01799887766';
+    case "rocket":
+      merchantNumber = "01799887766";
       break;
-    case 'upay':
-      merchantNumber = '01888997766';
+    case "upay":
+      merchantNumber = "01888997766";
       break;
     default:
-      merchantNumber = '';
+      merchantNumber = "";
   }
 
   const handleSubmit = () => {
     if (!amount || !userNumber || !transactionId) {
-      Alert.alert('Error', 'Please fill all required fields');
+      Alert.alert("Error", "Please fill all required fields");
       return;
     }
     onSubmit({ amount, userNumber, transactionId, screenshot });
-    setAmount('');
-    setUserNumber('');
-    setTransactionId('');
-    setScreenshot('');
+    setAmount("");
+    setUserNumber("");
+    setTransactionId("");
+    setScreenshot("");
   };
 
   const copyNumber = () => {
     Clipboard.setStringAsync(merchantNumber);
-    Alert.alert('Copied', `${merchantNumber} copied to clipboard`);
+    Alert.alert("Copied", `${merchantNumber} copied to clipboard`);
   };
 
   return (
-    <Modal animationType="slide" transparent visible={visible} onRequestClose={onClose}>
+    <Modal
+      animationType="slide"
+      transparent
+      visible={visible}
+      onRequestClose={onClose}
+    >
       <View style={styles.modalOverlay}>
         <View style={styles.modalContent}>
-          {/* Modal title and top number section for all methods */}
-          <View style={styles.modalHeader}>
-            <Text style={styles.modalTitle}>Deposit to {paymentMethod?.name}</Text>
+          {/* Header with close button and title */}
+          <View style={styles.headerSection}>
+            <View style={styles.headerBar} />
+            <View style={styles.headerRow}>
+              <Text style={styles.headerTitle}>ডিপোজিট</Text>
+              <Text style={styles.accountInfo}>
+                <Text style={styles.accountLabel}>অ্যাকাউন্ট: </Text>
+                <Text style={styles.accountName}>{paymentMethod?.name}</Text>
+              </Text>
+            </View>
           </View>
+
+          {/* Merchant number section */}
           {merchantNumber ? (
-            <View style={styles.topNumberSection}>
-              <Text style={styles.sendMoneyLabel}>Send money to</Text>
-              <View style={styles.numberRow}>
+            <View style={styles.merchantSection}>
+              <Text style={styles.sendToLabel}>
+                নিচে দেওয়া নাম্বারে টাকা পাঠান
+              </Text>
+              <View style={styles.merchantNumberContainer}>
                 <Text style={styles.merchantNumber}>{merchantNumber}</Text>
-                <TouchableOpacity onPress={copyNumber} style={styles.copyIconBtn}>
-                  <Ionicons name="copy-outline" size={22} color="#007AFF" />
+                <TouchableOpacity
+                  onPress={copyNumber}
+                  style={styles.copyButton}
+                >
+                  <Ionicons name="copy-outline" size={24} color="#000000ff" />
                 </TouchableOpacity>
               </View>
             </View>
           ) : null}
 
-          <ScrollView style={styles.modalBody} showsVerticalScrollIndicator={false}>
-            <Text style={styles.inputLabel}>Amount (৳5 - ৳5000)</Text>
-            <TextInput
-              style={styles.input}
-              value={amount}
-              onChangeText={setAmount}
-              placeholder="Enter amount"
-              keyboardType="numeric"
-              placeholderTextColor="#999"
-            />
+          {/* Form section */}
+          <ScrollView
+            style={styles.formSection}
+            showsVerticalScrollIndicator={false}
+          >
+            <View style={styles.inputGroup}>
+              <TextInput
+                style={styles.textInput}
+                value={amount}
+                onChangeText={setAmount}
+                placeholder="সর্বনিম্ন ৫০ থেকে সর্বোচ্চ ৫,০০০ টাকা"
+                keyboardType="numeric"
+                placeholderTextColor="#999"
+              />
+            </View>
 
-            <Text style={styles.inputLabel}>Your {paymentMethod?.name} Number</Text>
-            <TextInput
-              style={styles.input}
-              value={userNumber}
-              onChangeText={setUserNumber}
-              placeholder="01XXXXXXXXX"
-              keyboardType="phone-pad"
-              placeholderTextColor="#999"
-            />
+            <View style={styles.inputGroup}>
+              <TextInput
+                style={styles.textInput}
+                value={userNumber}
+                onChangeText={setUserNumber}
+                placeholder={`আপনার ${paymentMethod?.name} নাম্বার লিখুন`}
+                keyboardType="phone-pad"
+                placeholderTextColor="#999"
+              />
+            </View>
 
-            <Text style={styles.inputLabel}>Transaction ID</Text>
-            <TextInput
-              style={styles.input}
-              value={transactionId}
-              onChangeText={setTransactionId}
-              placeholder="Enter transaction ID"
-              placeholderTextColor="#999"
-            />
+            <View style={styles.inputGroup}>
+              <TextInput
+                style={styles.textInput}
+                value={transactionId}
+                onChangeText={setTransactionId}
+                placeholder="পেমেন্টের ট্রানজেকশন পোস্ট করুন"
+                placeholderTextColor="#999"
+              />
+            </View>
 
-            <Text style={styles.inputLabel}>Payment Screenshot (Optional)</Text>
-            <TouchableOpacity style={styles.uploadButton}>
-              <Text style={styles.uploadButtonText}>📷 Upload Screenshot</Text>
-            </TouchableOpacity>
+            <View style={[styles.inputGroup, {marginBottom: 0}]}>
+              <TextInput
+                style={styles.textInput}
+                value={transactionId}
+                onChangeText={setTransactionId}
+                placeholder="পেমেন্টের স্ক্রিনশট আপলোড করুন"
+                placeholderTextColor="#999"
+              />
+            </View>
           </ScrollView>
-          <View style={styles.modalButtonsFixed}>
+
+          {/* Buttons */}
+          <View style={styles.buttonContainer}>
             <TouchableOpacity style={styles.cancelButton} onPress={onClose}>
-              <Text style={styles.cancelButtonText}>Cancel</Text>
+              <Text style={styles.cancelButtonText}>বাতিল</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.confirmButton} onPress={handleSubmit}>
-              <Text style={styles.confirmButtonText}>Submit Request</Text>
+            <TouchableOpacity
+              style={styles.confirmButton}
+              onPress={handleSubmit}
+            >
+              <Text style={styles.confirmButtonText}>নিশ্চিত</Text>
             </TouchableOpacity>
+          </View>
+
+          {/* Victor Logo */}
+          <View style={styles.headerSection}>
+            <Image
+              source={require("../../assets/images/victor-logo.png")}
+              style={styles.victorLogo}
+            />
           </View>
         </View>
       </View>
@@ -138,160 +198,135 @@ export default function DepositModal({ visible, paymentMethod, onClose, onSubmit
 }
 
 const styles = StyleSheet.create({
+  victorLogo: {
+    width: 140,
+    height: 40,
+    marginTop: 20,
+  },
   modalOverlay: {
     flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    justifyContent: 'flex-end',
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    justifyContent: "flex-end",
   },
   modalContent: {
-    backgroundColor: '#fff',
-    borderTopLeftRadius: 30,
-    borderTopRightRadius: 30,
-    height: screenHeight * 0.8,
-    paddingTop: 18,
-    paddingHorizontal: 18,
-    paddingBottom: 18,
+    backgroundColor: "white",
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    height: "90%",
+    paddingTop: 8,
+    paddingHorizontal: 16,
+    paddingBottom: 20,
   },
-  topNumberSection: {
-    backgroundColor: '#f8f9fa',
-    borderRadius: 16,
-    padding: 4,
-    marginBottom: 18,
-    alignItems: 'center',
+  headerSection: {
+    alignItems: "center",
+    marginBottom: 0,
   },
-  sendMoneyLabel: {
-    fontSize: 13,
-    color: '#666',
-    fontFamily: 'Outfit-Regular',
+  headerBar: {
+    width: 40,
+    height: 4,
+    backgroundColor: "#D0D0D0",
+    borderRadius: 2,
+    marginBottom: 15,
+  },
+  headerRow: {
+    width: "100%",
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+
+  headerTitle: {
+    fontSize: 20,
+    fontFamily: "HindSiliguri-Bold",
+    color: "#1A1A1A",
     marginBottom: 4,
   },
-  numberRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
+  accountInfo: {
+    flexDirection: "row",
+    alignItems: "center",
   },
-  // removed duplicate merchantNumber style
-  copyIconBtn: {
-    padding: 4,
+  accountLabel: {
+    fontSize: 20,
+    fontFamily: "HindSiliguri-Regular",
+    color: "#666666",
   },
-  modalHeader: {
-    alignItems: 'center',
+  accountName: {
+    fontSize: 20,
+    fontFamily: "HindSiliguri-SemiBold",
+    color: "#007AFF",
+  },
+  merchantSection: {
+    marginTop: 20,
     marginBottom: 20,
-    paddingBottom: 15,
-    borderBottomWidth: 1,
-    borderBottomColor: '#f0f0f0',
   },
-  modalTitle: {
-    fontSize: 22,
-    fontFamily: 'Outfit-Bold',
-    color: '#333',
-    letterSpacing: 0.5,
+  sendToLabel: {
+    fontSize: 18,
+    fontFamily: "HindSiliguri-Medium",
+    color: "#666666",
+
+    textAlign: "center",
   },
   merchantNumberContainer: {
-    backgroundColor: '#f8f9fa',
-    padding: 12,
-    borderRadius: 10,
-    alignItems: 'center',
-    borderWidth: 1,
-    borderColor: '#e9ecef',
-    borderStyle: 'dashed',
-  },
-  merchantNumberLabel: {
-    fontSize: 12,
-    fontFamily: 'Outfit-Regular',
-    color: '#666',
-    marginBottom: 4,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
   },
   merchantNumber: {
-    fontSize: 18,
-    fontFamily: 'Outfit-Bold',
-    color: '#007AFF',
-    marginBottom: 4,
+    fontSize: 28,
+    fontFamily: "Outfit-Bold",
+    color: "#FF00FF",
+    marginRight: 4, // add a little space before the icon
   },
-  copyText: {
-    fontSize: 11,
-    fontFamily: 'Outfit-Medium',
-    color: '#007AFF',
+  copyButton: {
+    padding: 4,
   },
-  modalBody: {
-    flex: 1,
-  },
-  inputLabel: {
-    fontSize: 15,
-    fontFamily: 'Outfit-SemiBold',
-    color: '#333',
-    marginBottom: 8,
-    marginTop: 12,
-  },
-  input: {
-    backgroundColor: '#f8f9fa',
-    borderRadius: 10,
-    paddingHorizontal: 18,
-    paddingVertical: 12,
-    fontSize: 15,
-    fontFamily: 'Outfit-Medium',
-    borderWidth: 1,
-    borderColor: '#e9ecef',
+  formSection: {
     marginBottom: 8,
   },
-  uploadButton: {
-    backgroundColor: '#f8f9fa',
-    borderRadius: 10,
-    paddingVertical: 15,
-    paddingHorizontal: 18,
-    alignItems: 'center',
-    borderWidth: 1,
-    borderColor: '#e9ecef',
-    borderStyle: 'dashed',
+  inputGroup: {
     marginBottom: 20,
   },
-  uploadButtonText: {
-    fontSize: 14,
-    fontFamily: 'Outfit-Medium',
-    color: '#666',
+  textInput: {
+    borderWidth: 1,
+    borderColor: "#000",
+    borderRadius: 50,
+    paddingHorizontal: 24,
+    paddingVertical: 16,
+    fontSize: 18,
+    backgroundColor: "#ededed",
+    fontFamily: "HindSiliguri-Medium",
   },
-  modalButtons: {
-    display: 'none',
-  },
-  modalButtonsFixed: {
-    flexDirection: 'row',
-    gap: 12,
-    paddingTop: 10,
-    paddingBottom: 10,
-    backgroundColor: '#fff',
-    borderBottomLeftRadius: 30,
-    borderBottomRightRadius: 30,
-    position: 'absolute',
-    left: 0,
-    right: 0,
-    bottom: 0,
-    paddingHorizontal: 18,
-    zIndex: 10,
+  buttonContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    paddingTop: 0,
   },
   cancelButton: {
     flex: 1,
-    backgroundColor: '#f8f9fa',
-    paddingVertical: 14,
-    borderRadius: 12,
-    alignItems: 'center',
+    backgroundColor: "#F5F5F5",
+    paddingVertical: 12,
+    borderRadius: 24,
+    marginRight: 8,
     borderWidth: 1,
-    borderColor: '#e9ecef',
+    borderColor: "#000",
+    alignItems: "center",
   },
   cancelButtonText: {
-    fontSize: 15,
-    fontFamily: 'Outfit-SemiBold',
-    color: '#666',
+    fontSize: 18,
+    fontFamily: "HindSiliguri-Bold",
+    color: "#666666",
   },
   confirmButton: {
     flex: 1,
-    backgroundColor: '#007AFF',
-    paddingVertical: 14,
-    borderRadius: 12,
-    alignItems: 'center',
+    backgroundColor: "#eb01f6",
+    paddingVertical: 12,
+    borderRadius: 24,
+    marginLeft: 8,
+    alignItems: "center",
   },
   confirmButtonText: {
-    fontSize: 15,
-    fontFamily: 'Outfit-SemiBold',
-    color: '#fff',
+    fontSize: 18,
+    fontFamily: "HindSiliguri-Bold",
+    color: "white",
   },
 });

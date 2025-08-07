@@ -12,8 +12,8 @@ export default function AppHeader({ userBalance, activeTab }: AppHeaderProps) {
 
   // Helper to convert English digits to Bengali
   const toBengaliNumber = (num: number) =>
-    num
-      .toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+    Math.floor(num)
+      .toLocaleString('en-US')
       .replace(/\d/g, d => '০১২৩৪৫৬৭৮৯'[parseInt(d)]);
 
   // Get page title and icon based on active tab
@@ -70,6 +70,10 @@ export default function AppHeader({ userBalance, activeTab }: AppHeaderProps) {
         {/* Balance Section */}
         <View style={styles.balanceSection}>
           <View style={styles.balanceContainer}>
+            <Image 
+              source={require('../assets/images/icons/coin.png')} 
+              style={styles.coinIcon} 
+            />
             <Text style={styles.balanceAmount}>
               ৳{toBengaliNumber(userBalance)}
             </Text>
@@ -82,7 +86,7 @@ export default function AppHeader({ userBalance, activeTab }: AppHeaderProps) {
 
 const styles = StyleSheet.create({
   header: {
-    backgroundColor: '#ff8c00',
+    backgroundColor: '#FFD700',
     paddingHorizontal: 10,
     paddingBottom: 16,
     borderBottomWidth: 1,
@@ -115,7 +119,7 @@ const styles = StyleSheet.create({
   pageTitle: {
     fontSize: 24,
     fontFamily: 'HindSiliguri-Bold',
-    color: '#ffffff',
+    color: '#000',
     textAlign: 'left',
   },
   balanceSection: {
@@ -130,13 +134,17 @@ const styles = StyleSheet.create({
     paddingEnd: 12,
     borderRadius: 25,
     borderWidth: 2,
-    borderColor: '#ffffff',
+    borderColor: '#000',
   },
   balanceAmount: {
     fontSize: 18,
     fontFamily: 'HindSiliguri-Bold',
-    color: '#ffffff',
+    color: '#000',
     marginLeft: 6,
     letterSpacing: 0.5,
+  },
+  coinIcon: {
+    width: 24,
+    height: 24,
   },
 });

@@ -59,7 +59,7 @@ export default function LoginScreen() {
     <View style={styles.container}>
       {/* Background Image */}
       <ImageBackground
-        source={require('../../assets/images/onboarding-bg.png')}
+        source={require('../../assets/images/login-bg.png')}
         style={styles.backgroundImage}
         resizeMode="cover"
       >

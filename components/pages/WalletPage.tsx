@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import {
   Image,
   Modal,
@@ -40,14 +40,14 @@ const methodImages: Record<string, any> = {
 };
 
 const paymentMethods: PaymentMethod[] = [
-  { id: "bkash", name: "bKash", type: "mobile", icon: "" },
-  { id: "nagad", name: "Nagad", type: "mobile", icon: "" },
-  { id: "rocket", name: "Rocket", type: "mobile", icon: "" },
-  { id: "upay", name: "Upay", type: "mobile", icon: "" },
+  { id: "bkash", name: "বিকাশ", type: "mobile", icon: "" },
+  { id: "nagad", name: "নগদ", type: "mobile", icon: "" },
+  { id: "rocket", name: "রকেট", type: "mobile", icon: "" },
+  { id: "upay", name: "উপায়", type: "mobile", icon: "" },
 ];
 
 export default function WalletPage() {
-  const [userBalance] = useState(1250.5);
+  const [userBalance] = useState(10000);
   const [depositModalVisible, setDepositModalVisible] = useState(false);
   const [withdrawModalVisible, setWithdrawModalVisible] = useState(false);
   const [historyModalVisible, setHistoryModalVisible] = useState(false);
@@ -80,6 +80,10 @@ export default function WalletPage() {
     );
   };
 
+  // Helper to convert English digits to Bengali
+  const toBengaliNumber = (str: string) =>
+    str.replace(/\d/g, (d) => "০১২৩৪৫৬৭৮৯"[parseInt(d)]);
+
   return (
     <View style={styles.container}>
       <ScrollView
@@ -91,81 +95,128 @@ export default function WalletPage() {
           <View style={styles.atmCard}>
             {/* Card Header */}
             <View style={styles.cardHeader}>
-              <Text style={styles.cardBrand}>ColorTrade</Text>
+              <Image
+                source={require("../../assets/images/app-logo.png")}
+                style={{ width: 200, height: 40, resizeMode: "contain" }}
+              />
               <View style={styles.chip}>
                 <View style={styles.chipInner} />
               </View>
             </View>
 
-            {/* Card Number */}
-            <View style={styles.cardNumber}>
-              <Text style={styles.cardNumberText}>**** **** **** 1234</Text>
-            </View>
-
-            {/* Card Footer */}
-            <View style={styles.cardFooter}>
-              <View>
-                <Text style={styles.cardValue}>JOHN DOE</Text>
-              </View>
-              <View>
-                <Text style={styles.cardLabel}>VALID THRU</Text>
-                <Text style={styles.cardValue}>12/28</Text>
-              </View>
-            </View>
-
-            {/* Balance */}
-            <View style={styles.balanceContainer}>
-              <Text style={styles.balanceAmount}>
-                ৳{userBalance.toFixed(2)}
+            {/* Balance with label above */}
+            <View
+              style={[
+                styles.balanceContainer,
+                { width: "90%", height: "auto" },
+              ]}
+            >
+              <Text
+                style={[
+                  styles.cardValue,
+                  { color: "#fff", marginBottom: 0, paddingBottom: 0 },
+                ]}
+              >
+                অ্যাকাউন্ট ব্যালেন্স (টাকা)
               </Text>
+              <View
+                style={{
+                  flexDirection: "row",
+                  alignItems: "flex-end",
+                  justifyContent: "space-between",
+                  marginBottom: 0,
+                  paddingBottom: 0,
+                }}
+              >
+                <Text style={[styles.balanceAmount, { lineHeight: 32 }]}>
+                  ৳{toBengaliNumber(userBalance.toLocaleString("en-US"))}
+                </Text>
+                <Text style={[styles.vewText, { lineHeight: 18 }]}>V.E.W</Text>
+              </View>
             </View>
           </View>
         </View>
 
         {/* Deposit Section */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Deposit Money</Text>
-          <View style={styles.paymentGrid}>
-            {paymentMethods.map((method) => (
-              <TouchableOpacity
-                key={method.id}
-                style={styles.paymentMethod}
-                onPress={() => handlePaymentMethodSelect(method)}
-              >
-                {methodImages[method.id] && (
-                  <Image
-                    source={methodImages[method.id]}
-                    style={styles.paymentImage}
-                    resizeMode="contain"
-                  />
+        <View style={styles.depositSection}>
+          <Text style={styles.depositTitle}>ডিপোজিট করুন</Text>
+          <View style={styles.paymentBox}>
+            {paymentMethods.map((method, idx) => (
+              <React.Fragment key={method.id}>
+                <TouchableOpacity
+                  style={styles.paymentMethodBox}
+                  onPress={() => handlePaymentMethodSelect(method)}
+                >
+                  {methodImages[method.id] && (
+                    <Image
+                      source={methodImages[method.id]}
+                      style={styles.paymentImage}
+                      resizeMode="contain"
+                    />
+                  )}
+                  <Text style={styles.paymentName}>{method.name}</Text>
+                </TouchableOpacity>
+                {idx < paymentMethods.length - 1 && (
+                  <View style={styles.verticalDivider} />
                 )}
-              </TouchableOpacity>
+              </React.Fragment>
             ))}
           </View>
         </View>
 
-
         {/* Withdraw Section */}
-        <View style={styles.section}>
-          <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 0 }}>
-            <Text style={styles.sectionTitle}>Withdraw Money</Text>
+        <View style={styles.withdrawSection}>
+          <View
+            style={{
+              flexDirection: "row",
+              alignItems: "center",
+              justifyContent: "space-between",
+              marginBottom: 10,
+            }}
+          >
+            <Text style={styles.withdrawTitle}>উইথড্র করুন</Text>
             <TouchableOpacity onPress={() => setHistoryModalVisible(true)}>
-              <Text style={{ color: '#007AFF', fontFamily: 'Outfit-Bold', fontSize: 16 }}>History</Text>
+              <Text style={styles.historyButton}>ইতিহাস</Text>
             </TouchableOpacity>
           </View>
-          <TouchableOpacity
-            style={styles.withdrawButton}
-            onPress={() => setWithdrawModalVisible(true)}
-          >
-            <Text style={styles.withdrawIcon}>💸</Text>
-            <Text style={styles.withdrawText}>Withdraw Funds</Text>
-            <Text style={styles.withdrawArrow}>→</Text>
-          </TouchableOpacity>
+          <View style={styles.withdrawPaymentBox}>
+            {paymentMethods.map((method, idx) => (
+              <React.Fragment key={method.id}>
+                <TouchableOpacity
+                  style={styles.withdrawMethodBox}
+                  onPress={() => {
+                    setSelectedPaymentMethod(method);
+                    setWithdrawModalVisible(true);
+                  }}
+                >
+                  {methodImages[method.id] && (
+                    <Image
+                      source={methodImages[method.id]}
+                      style={styles.paymentImage}
+                      resizeMode="contain"
+                    />
+                  )}
+                  <Text style={styles.paymentName}>{method.name}</Text>
+                </TouchableOpacity>
+                {idx < paymentMethods.length - 1 && (
+                  <View style={styles.verticalDivider} />
+                )}
+              </React.Fragment>
+            ))}
+          </View>
         </View>
 
         {/* Ads Section */}
         <View style={styles.adsCard}>
           <Text style={styles.adsText}>ADS Here</Text>
+        </View>
+
+        {/* Victor Logo */}
+        <View style={styles.modalFooter}>
+          <Image
+            source={require("../../assets/images/victor-logo.png")}
+            style={styles.victorLogo}
+          />
         </View>
       </ScrollView>
 
@@ -178,6 +229,7 @@ export default function WalletPage() {
 
       <WithdrawModal
         visible={withdrawModalVisible}
+        paymentMethod={selectedPaymentMethod}
         onClose={() => setWithdrawModalVisible(false)}
         onSubmit={handleWithdrawSubmit}
       />
@@ -239,7 +291,7 @@ export default function WalletPage() {
             <View style={styles.historyFooter}>
               <Image
                 source={require("../../assets/images/victor-logo.png")}
-                style={styles.victorLogoHistory}
+                style={styles.victorLogo}
                 resizeMode="contain"
               />
             </View>
@@ -262,6 +314,14 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#f5f5f5",
   },
+
+  vewText: {
+    color: "#000",
+    fontFamily: "Outfit-Bold",
+    fontSize: 18,
+    marginBottom: 0,
+    paddingBottom: 0,
+  },
   cardContainer: {
     marginLeft: 20,
     marginRight: 20,
@@ -271,7 +331,7 @@ const styles = StyleSheet.create({
   atmCard: {
     height: 220,
     borderRadius: 20,
-    padding: 25,
+    padding: 15,
     backgroundColor: "#667eea",
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 8 },
@@ -283,13 +343,8 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginBottom: 20,
   },
-  cardBrand: {
-    fontSize: 20,
-    fontFamily: "Outfit-Bold",
-    color: "#fff",
-  },
+
   chip: {
     width: 45,
     height: 35,
@@ -304,35 +359,23 @@ const styles = StyleSheet.create({
     backgroundColor: "#FFA500",
     borderRadius: 4,
   },
-  cardNumber: {
-    marginBottom: 25,
-  },
-  cardNumberText: {
-    fontSize: 22,
-    fontFamily: "Outfit-SemiBold",
-    color: "#fff",
-    letterSpacing: 2,
-  },
+
   cardFooter: {
     flexDirection: "row",
     justifyContent: "space-between",
-    marginBottom: 15,
   },
-  cardLabel: {
-    fontSize: 10,
-    fontFamily: "Outfit-Regular",
-    color: "#ddd",
-    marginBottom: 2,
-  },
+
   cardValue: {
     fontSize: 14,
-    fontFamily: "Outfit-SemiBold",
-    color: "#fff",
+    fontFamily: "HindSiliguri-Bold",
+    color: "#000",
   },
   balanceContainer: {
     position: "absolute",
     bottom: 25,
     left: 25,
+    paddingBottom: 0,
+    marginBottom: 0,
   },
   balanceLabel: {
     fontSize: 12,
@@ -341,9 +384,11 @@ const styles = StyleSheet.create({
     marginBottom: 0,
   },
   balanceAmount: {
-    fontSize: 24,
-    fontFamily: "Outfit-Bold",
-    color: "#fff",
+    fontSize: 32,
+    fontFamily: "HindSiliguri-Bold",
+    color: "#000",
+    marginBottom: 0,
+    paddingBottom: 0,
   },
   section: {
     backgroundColor: "#fff",
@@ -377,18 +422,101 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderColor: "#e9ecef",
   },
+  depositSection: {
+    margin: 0,
+    marginTop: 0,
+    padding: 10,
+  },
+  depositTitle: {
+    fontSize: 20,
+    fontFamily: "HindSiliguri-Bold",
+    color: "#333",
+    marginLeft: 10,
+    marginTop: 10,
+    marginBottom: 10,
+  },
+  paymentBox: {
+    flexDirection: "row",
+    borderWidth: 1,
+    borderColor: "#e9ecef",
+    borderRadius: 12,
+    backgroundColor: "#f8f9fa",
+    overflow: "hidden",
+    alignItems: "center",
+    justifyContent: "space-between",
+    marginHorizontal: 10,
+    marginBottom: 0,
+  },
+  paymentMethodBox: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    paddingVertical: 18,
+    paddingHorizontal: 0,
+    backgroundColor: "transparent",
+  },
+
+  // Withdraw Section Styles
+  withdrawSection: {
+    margin: 0,
+    marginTop: 0,
+    padding: 10,
+  },
+  withdrawTitle: {
+    fontSize: 20,
+    fontFamily: "HindSiliguri-Bold",
+    color: "#333",
+    marginLeft: 10,
+    marginTop: 0,
+    marginBottom: 0,
+  },
+  withdrawPaymentBox: {
+    flexDirection: "row",
+    borderWidth: 1,
+    borderColor: "#e9ecef",
+    borderRadius: 12,
+    backgroundColor: "#f8f9fa",
+    overflow: "hidden",
+    alignItems: "center",
+    justifyContent: "space-between",
+    marginHorizontal: 10,
+    marginBottom: 10,
+  },
+  historyButton: {
+    color: "#007AFF",
+    fontFamily: "HindSiliguri-Bold",
+    fontSize: 16,
+    marginTop: 10,
+    marginBottom: 10,
+    marginRight: 20,
+    textAlignVertical: "center",
+    textDecorationLine: "underline",
+  },
+  withdrawMethodBox: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    paddingVertical: 18,
+    paddingHorizontal: 0,
+    backgroundColor: "transparent",
+  },
+  verticalDivider: {
+    width: 1,
+    height: 64,
+    backgroundColor: "#e9ecef",
+  },
   paymentIcon: {
     fontSize: 32,
     marginBottom: 10,
   },
   paymentImage: {
-    width: 128,
-    height: 64,
+    width: 58,
+    height: 42,
     marginBottom: 10,
   },
   paymentName: {
     fontSize: 16,
-    fontFamily: "Outfit-SemiBold",
+    fontFamily: "HindSiliguri-Bold",
     color: "#333",
   },
   withdrawButton: {
@@ -643,8 +771,15 @@ const styles = StyleSheet.create({
     fontFamily: "Outfit-Regular",
     marginBottom: 5,
   },
-  victorLogoHistory: {
+  victorLogo: {
     width: 120,
     height: 36,
+  },
+    modalFooter: {
+    alignItems: "center",
+    borderTopColor: "#f0f0f0",
+    paddingTop: 8,
+    width: "100%",
+    paddingBottom: 40,
   },
 });

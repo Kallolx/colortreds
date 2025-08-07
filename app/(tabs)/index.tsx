@@ -11,7 +11,7 @@ type ActiveTab = 'trade' | 'wallet' | 'profile';
 
 export default function MainApp() {
   const [activeTab, setActiveTab] = useState<ActiveTab>('trade');
-  const [userBalance] = useState(1250.50);
+  const [userBalance] = useState(10000);
   const [notificationVisible, setNotificationVisible] = useState(false);
   const [notificationMessage, setNotificationMessage] = useState('');
 

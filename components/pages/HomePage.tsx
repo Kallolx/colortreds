@@ -1,10 +1,9 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Image } from "expo-image";
-import { useEffect, useRef, useState } from "react";
+import { LinearGradient } from "expo-linear-gradient";
+import { useEffect, useState } from "react";
 import {
-  Animated,
   Dimensions,
-  Easing,
   Modal,
   ScrollView,
   StyleSheet,
@@ -19,7 +18,6 @@ interface ColorRace {
   color: string;
   name: string;
   backgroundColor: string;
-  odds: string;
 }
 
 interface BetHistory {
@@ -28,8 +26,6 @@ interface BetHistory {
   time: string;
   winningColor: string;
   winnersCount: string;
-  myBet?: string;
-  gameResult: string;
 }
 
 const screenHeight = Dimensions.get("window").height;
@@ -39,8 +35,6 @@ export default function HomePage() {
   const [selectedColor, setSelectedColor] = useState<ColorRace | null>(null);
   const [betAmount, setBetAmount] = useState("");
   const [lastBetColor, setLastBetColor] = useState<string | null>(null);
-  const animatedValue = useRef(new Animated.Value(0)).current;
-  const [animationPhase, setAnimationPhase] = useState(0);
   // Consent modal state
   const [showConsentModal, setShowConsentModal] = useState(false);
   // Show consent modal only once
@@ -63,56 +57,60 @@ export default function HomePage() {
   // Round and Timer states
   const [currentRound, setCurrentRound] = useState("#1548");
   const [timeRemaining, setTimeRemaining] = useState(29 * 60 + 59); // 29:59 in seconds
-  const pulseAnim = useRef(new Animated.Value(1)).current;
 
   const colorRaces: ColorRace[] = [
     {
       color: "Yellow",
       name: "Gold Rush",
       backgroundColor: "#FFD700",
-      odds: "2.5x",
     },
     {
       color: "Purple",
       name: "Royal Reign",
       backgroundColor: "#8A2BE2",
-      odds: "3.2x",
     },
     {
       color: "Orange",
       name: "Sunset Storm",
       backgroundColor: "#FF8C00",
-      odds: "2.8x",
     },
   ];
 
   const betHistory: BetHistory[] = [
     {
-      roundNumber: "#1547",
-      date: "Mon Sep 16, 03:00",
-      time: "03:00",
+      roundNumber: "#1999",
+      date: "Mon Sep 16, 03:30",
+      time: "03:30",
       winningColor: "Yellow",
-      winnersCount: "১৮",
-      myBet: "Yellow",
-      gameResult: "জিতেছেন ✓",
+      winnersCount: "২৪৫০০",
     },
     {
-      roundNumber: "#1546",
+      roundNumber: "#1998",
       date: "Mon Sep 16, 03:00",
       time: "03:00",
       winningColor: "Purple",
-      winnersCount: "২৫",
-      myBet: "Orange",
-      gameResult: "হেরেছেন ✗",
+      winnersCount: "৪৩০০",
     },
     {
-      roundNumber: "#1545",
+      roundNumber: "#1997",
+      date: "Mon Sep 16, 02:30",
+      time: "02:30",
+      winningColor: "Orange",
+      winnersCount: "৯৯৪৪",
+    },
+    {
+      roundNumber: "#1996",
       date: "Mon Sep 16, 02:00",
       time: "02:00",
-      winningColor: "Orange",
-      winnersCount: "৩২",
-      myBet: "Orange",
-      gameResult: "জিতেছেন ✓",
+      winningColor: "Yellow",
+      winnersCount: "২০৪৪৮",
+    },
+    {
+      roundNumber: "#1995",
+      date: "Mon Sep 16, 01:30",
+      time: "01:30",
+      winningColor: "Purple",
+      winnersCount: "২৪৯০",
     },
   ];
 
@@ -133,49 +131,6 @@ export default function HomePage() {
     return () => clearInterval(timer);
   }, [currentRound]);
 
-  // Pulse animation for live indicator
-  useEffect(() => {
-    Animated.loop(
-      Animated.sequence([
-        Animated.timing(pulseAnim, {
-          toValue: 1.2,
-          duration: 1000,
-          useNativeDriver: true,
-        }),
-        Animated.timing(pulseAnim, {
-          toValue: 1,
-          duration: 1000,
-          useNativeDriver: true,
-        }),
-      ])
-    ).start();
-  }, []);
-
-  // Animation for curved lines
-  useEffect(() => {
-    const startAnimation = () => {
-      const listener = animatedValue.addListener(({ value }) => {
-        setAnimationPhase(value);
-      });
-
-      Animated.loop(
-        Animated.timing(animatedValue, {
-          toValue: 100,
-          duration: 4000,
-          easing: Easing.linear,
-          useNativeDriver: false,
-        })
-      ).start();
-
-      return () => {
-        animatedValue.removeListener(listener);
-      };
-    };
-
-    const cleanup = startAnimation();
-    return cleanup;
-  }, []);
-
   // Helper to convert English digits to Bengali
   const toBengaliNumber = (str: string) =>
     str.replace(/\d/g, (d) => "০১২৩৪৫৬৭৮৯"[parseInt(d)]);
@@ -188,36 +143,6 @@ export default function HomePage() {
       .toString()
       .padStart(2, "0")}`;
     return toBengaliNumber(timeStr);
-  };
-
-  // Generate curved path for SVG
-  const generateCurvePath = (baseY: number, phase: number = 0) => {
-    const width = 230;
-    const points = [];
-
-    for (let x = 0; x <= width; x += 8) {
-      const wave1 = Math.sin((x + phase) / 25) * 6;
-      const wave2 = Math.sin((x + phase) / 45) * 10;
-      const wave3 = Math.sin((x + phase) / 70) * 4;
-      const y = baseY + wave1 + wave2 + wave3;
-      points.push({ x, y });
-    }
-
-    let path = `M 0 ${points[0].y}`;
-    for (let i = 1; i < points.length - 1; i++) {
-      const currentPoint = points[i];
-      const nextPoint = points[i + 1];
-      const controlX = (currentPoint.x + nextPoint.x) / 2;
-      const controlY = (currentPoint.y + nextPoint.y) / 2;
-      path += ` Q ${currentPoint.x} ${currentPoint.y} ${controlX} ${controlY}`;
-    }
-
-    if (points.length > 1) {
-      const lastPoint = points[points.length - 1];
-      path += ` T ${lastPoint.x} ${lastPoint.y}`;
-    }
-
-    return path;
   };
 
   const handleColorSelect = (color: ColorRace) => {
@@ -280,97 +205,118 @@ export default function HomePage() {
           </View>
         </View>
       </Modal>
+
       <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
         {/* Ads Section */}
         <View style={styles.adsCard}>
-          <Text style={styles.adsText}>ADS Here</Text>
+          <Text style={styles.adsText}>ADS</Text>
         </View>
 
-        {/* Live Color Trends with Round Info */}
+        {/* Trades with Round Info */}
         <View style={styles.graphCard}>
-          {/* Round Info Header */}
-          <View style={styles.roundInfoContainer}>
-            <View style={styles.roundSection}>
-              <Text style={styles.roundNumber}>
-                {toBengaliNumber(currentRound)}
-              </Text>
-              <Text style={styles.roundLabel}>বর্তমান রাউন্ড</Text>
-            </View>
-            {/* Vertical Divider */}
-            <View style={styles.roundInfoDivider} />
-            <View style={styles.timerSectionRow}>
-              <Text style={styles.timerLabel}>অবশিষ্ট সময়</Text>
-              <View style={styles.timerContainerInline}>
-                <Text style={styles.timerClockIcon}>🕒</Text>
-                <Text style={styles.timerText}>
-                  {formatTime(timeRemaining)}
-                </Text>
+          <LinearGradient
+            colors={["#131212", "#dfdbdb"]}
+            style={styles.gradientBackground}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 0, y: 1 }}
+          >
+            {/* Floating Round Info Header */}
+            <View style={styles.floatingRoundInfo}>
+              <View style={styles.roundInfoContainer}>
+                {/* Left Black Circle */}
+                <View style={styles.sideCircle}>
+                  <Image
+                    source={require("../../assets/images/icons/chart.png")}
+                    style={styles.circleIcon}
+                  />
+                </View>
+                <View style={styles.contentSection}>
+                  <View style={styles.roundSection}>
+                    <Text style={styles.roundLabel}>রাউন্ড নং</Text>
+                    <Text style={styles.roundNumber}>
+                      {toBengaliNumber(currentRound)}
+                    </Text>
+                  </View>
+                  {/* Vertical Divider */}
+                  <View style={styles.roundInfoDivider} />
+                  <View style={styles.timerSection}>
+                    <Text style={styles.timerLabel}>অবশিষ্ট সময়</Text>
+                    <View style={styles.timerDigitsContainer}>
+                      {formatTime(timeRemaining)
+                        .split("")
+                        .map((digit, index) => (
+                          <View
+                            key={index}
+                            style={
+                              digit === ":"
+                                ? styles.colonContainer
+                                : styles.digitContainer
+                            }
+                          >
+                            <Text
+                              style={
+                                digit === ":"
+                                  ? styles.colonText
+                                  : styles.digitText
+                              }
+                            >
+                              {digit}
+                            </Text>
+                          </View>
+                        ))}
+                    </View>
+                  </View>
+                </View>
+                {/* Right Black Circle */}
+                <View style={styles.sideCircle}>
+                  <Image
+                    source={require("../../assets/images/icons/clock.png")}
+                    style={styles.circleIcon}
+                  />
+                </View>
               </View>
             </View>
-          </View>
 
-          <View style={styles.graphContainer}>
-            {/* Grid lines */}
-            <View style={styles.gridLines}>
-              {[...Array(4)].map((_, index) => (
-                <View
-                  key={index}
-                  style={[styles.gridLine, { top: 20 + index * 20 }]}
-                />
-              ))}
-            </View>
-
-            {/* SVG Curved Lines */}
-            <Animated.View style={styles.svgContainer}>
+            {/* Trading Chart Lines */}
+            <View style={styles.horizontalLinesContainer}>
               <Svg
-                height="110"
-                width="230"
-                style={[styles.svg, { alignSelf: "flex-end" }]}
+                width="100%"
+                height="180"
+                viewBox="0 0 350 180"
+                style={{ position: "absolute", top: 0, left: 0, right: 0 }}
               >
+                {/* Yellow racer */}
                 <Path
-                  d={generateCurvePath(25, animationPhase)}
+                  d="M0,40 L20,40 L40,20 L60,60 L80,35 L100,50 L120,30 L140,60 L160,45 L180,70 L200,30 L220,60 L240,40 L260,50 L280,30 L300,60 L320,40 L340,50"
                   stroke="#FFD700"
-                  strokeWidth={lastBetColor === "Yellow" ? "4" : "3"}
+                  strokeWidth="3.5"
                   fill="none"
+                  strokeLinejoin="round"
                   strokeLinecap="round"
-                  opacity={lastBetColor === "Yellow" ? 1 : 0.8}
                 />
+
+                {/* Purple racer - intersects and dips differently */}
                 <Path
-                  d={generateCurvePath(50, animationPhase + 30)}
+                  d="M0,80 L20,80 L40,100 L60,50 L80,75 L100,65 L120,90 L140,55 L160,85 L180,60 L200,95 L220,70 L240,90 L260,60 L280,85 L300,65 L320,75 L340,70"
                   stroke="#8A2BE2"
-                  strokeWidth={lastBetColor === "Purple" ? "4" : "3"}
+                  strokeWidth="3.5"
                   fill="none"
+                  strokeLinejoin="round"
                   strokeLinecap="round"
-                  opacity={lastBetColor === "Purple" ? 1 : 0.8}
                 />
+
+                {/* Orange racer - jumps the highest and lowest */}
                 <Path
-                  d={generateCurvePath(75, animationPhase + 60)}
+                  d="M0,130 L20,130 L40,110 L60,160 L80,120 L100,140 L120,100 L140,150 L160,125 L180,145 L200,115 L220,155 L240,130 L260,140 L280,110 L300,150 L320,130 L340,135"
                   stroke="#FF8C00"
-                  strokeWidth={lastBetColor === "Orange" ? "4" : "3"}
+                  strokeWidth="3.5"
                   fill="none"
+                  strokeLinejoin="round"
                   strokeLinecap="round"
-                  opacity={lastBetColor === "Orange" ? 1 : 0.8}
                 />
               </Svg>
-            </Animated.View>
-
-            {/* Color labels */}
-            <View style={styles.colorLabels}>
-              <Text style={[styles.colorLabelText, { top: 17, color: "#000" }]}>
-                হলুদ
-              </Text>
-              <Text
-                style={[styles.colorLabelText, { top: 42, color: "#8A2BE2" }]}
-              >
-                বেগুনি
-              </Text>
-              <Text
-                style={[styles.colorLabelText, { top: 67, color: "#FF8C00" }]}
-              >
-                কমলা
-              </Text>
             </View>
-          </View>
+          </LinearGradient>
         </View>
 
         {/* Color Selection */}
@@ -380,22 +326,14 @@ export default function HomePage() {
             {colorRaces.map((race, index) => (
               <TouchableOpacity
                 key={index}
-                style={[
-                  styles.colorButton,
-                  { backgroundColor: race.backgroundColor },
-                ]}
+                style={[styles.colorButton, { backgroundColor: "#000" }]}
                 onPress={() => handleColorSelect(race)}
               >
-                <Text
-                  style={[
-                    styles.colorButtonText,
-                    race.color === "Yellow" && { color: "#000" },
-                  ]}
-                >
+                <Text style={[styles.colorButtonText]}>
                   {race.color === "Yellow"
                     ? "হলুদ"
                     : race.color === "Purple"
-                    ? "বেগুনি"
+                    ? "গোলাপি"
                     : "কমলা"}
                 </Text>
               </TouchableOpacity>
@@ -405,7 +343,9 @@ export default function HomePage() {
 
         {/* Ads Section (before Recent Bets) */}
         <View style={styles.adsCard}>
-          <Text style={styles.adsText}>ADS Here</Text>
+          <Text style={styles.adsText}>
+            our company (Victor Earn Way) promotional ADS
+          </Text>
         </View>
 
         {/* Recent Bets */}
@@ -417,99 +357,68 @@ export default function HomePage() {
                 { marginBottom: 0, textAlign: "left" },
               ]}
             >
-              সর্বশেষ বেট এর তালিকা
+              সর্বশেষ ৫টি ট্রেড এর তালিকা সমূহ
             </Text>
             <TouchableOpacity>
-              <Text style={styles.allBetsText}>সকল বেট</Text>
+              <Text style={styles.allBetsText}>সকল ট্রেড</Text>
             </TouchableOpacity>
           </View>
           {betHistory.map((bet, index) => (
             <View key={index} style={styles.betHistoryItem}>
-              {/* Profile Icon */}
-              <View style={styles.profileIconContainer}>
-                <View
-                  style={[
-                    styles.profileIcon,
-                    {
-                      borderColor: bet.gameResult.includes("জিতেছেন")
-                        ? "#28a745"
-                        : "#dc3545",
-                    },
-                  ]}
-                >
-                  <Image
-                    source={require("../../assets/images/logo.png")}
-                    style={{ width: 30, height: 30, borderRadius: 12 }}
-                  />
-                </View>
-              </View>
+              {/* Logo without background/border */}
+              <Image
+                source={require("../../assets/images/logo.png")}
+                style={styles.betLogo}
+              />
 
-              {/* Bet Details */}
-              <View style={styles.betDetailsContainer}>
-                {/* Round Number */}
-                <View style={styles.betDetailRow}>
-                  <Text style={styles.betLabel}>রাউন্ড নং:</Text>
-                  <Text style={styles.roundNumberValue}>
+              {/* Round and Date Section */}
+              <View style={styles.roundDateSection}>
+                <Text style={styles.roundText}>
+                  রাউন্ড{" "}
+                  <Text style={{ fontFamily: "HindSiliguri-Bold" }}>
                     {toBengaliNumber(bet.roundNumber)}
                   </Text>
-                </View>
+                </Text>
+                <Text style={styles.dateTimeText}>{bet.date}</Text>
+              </View>
 
-                {/* Game End Time */}
-                <View style={styles.betDetailRow}>
-                  <Text style={styles.betLabel}>গেম শেষের সময়:</Text>
-                  <Text style={styles.betValue}>{bet.date}</Text>
-                </View>
-
-                {/* Game Result */}
-                <View style={styles.betDetailRow}>
-                  <Text style={styles.betLabel}>গেম ফলাফল:</Text>
+              {/* Winners and Color Section */}
+              <View style={styles.winnersSection}>
+                <Text style={styles.winnersText}>
+                  বিজয়ী সংখ্যা:{" "}
                   <Text
+                    style={{ fontFamily: "HindSiliguri-Bold", fontSize: 16 }}
+                  >
+                    {bet.winnersCount}
+                  </Text>
+                </Text>
+                <View style={styles.winnerColorRow}>
+                  <Text style={styles.winnerLabel}>বিজয়ী ট্রেড রং</Text>
+                  <View
                     style={[
-                      styles.betValue,
+                      styles.winnerColorBox,
                       {
-                        color: bet.gameResult.includes("জিতেছেন")
-                          ? "#28a745"
-                          : "#dc3545",
+                        backgroundColor:
+                          bet.winningColor === "Yellow"
+                            ? "#FFD700"
+                            : bet.winningColor === "Purple"
+                            ? "#8A2BE2"
+                            : "#FF8C00",
                       },
                     ]}
-                  >
-                    {bet.gameResult}
-                  </Text>
-                </View>
-
-                {/* Winning Color */}
-                <View style={styles.betDetailRow}>
-                  <Text style={styles.betLabel}>বিজয়ী রং:</Text>
-                  <View style={styles.winningNumberContainer}>
-                    <Text style={styles.winningNumberText}>
-                      {bet.winnersCount} জন জিতেছে
-                    </Text>
-                    <View
-                      style={[
-                        styles.colorIndicator,
-                        {
-                          backgroundColor:
-                            bet.winningColor === "Yellow"
-                              ? "#FFD700"
-                              : bet.winningColor === "Purple"
-                              ? "#8A2BE2"
-                              : "#FF8C00",
-                        },
-                      ]}
-                    />
-                  </View>
+                  />
                 </View>
               </View>
             </View>
           ))}
-          
-        {/* Bottom Logo */}
-        <View style={styles.bottomLogoContainer}>
-          <Image
-            source={require("../../assets/images/victor-logo.png")}
-            style={styles.bottomLogo}
-          />
-        </View>
+
+          {/* Bottom Logo */}
+          <View style={styles.bottomLogoContainer}>
+            <Image
+              source={require("../../assets/images/victor-logo.png")}
+              style={styles.bottomLogo}
+            />
+          </View>
         </View>
 
         {/* Betting Modal */}
@@ -535,7 +444,7 @@ export default function HomePage() {
                   <Svg width={30} height={30} viewBox="0 0 24 24" fill="none">
                     <Path
                       d="M12 2L15 8.5L22 9.3L17 14.1L18.2 21L12 17.8L5.8 21L7 14.1L2 9.3L9 8.5L12 2Z"
-                      fill="#ffffff"
+                      fill="#000000ff"
                     />
                   </Svg>
                 </View>
@@ -543,14 +452,16 @@ export default function HomePage() {
                   {selectedColor?.color === "Yellow"
                     ? "হলুদ"
                     : selectedColor?.color === "Purple"
-                    ? "বেগুনি"
+                    ? "গোলাপি"
                     : "কমলা"}
                 </Text>
               </View>
 
               {/* Bet Amount Text */}
               <View style={styles.betAmountLabelRow}>
-                <Text style={styles.betAmountLabelLeft}>আমি বেট করতে চাই</Text>
+                <Text style={styles.betAmountLabelLeft}>
+                  আমি ট্রেড করতে চাই
+                </Text>
               </View>
 
               {/* Amount Input */}
@@ -603,7 +514,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   adsCard: {
-    backgroundColor: "#fff",
+    backgroundColor: "#dcd9d8ff",
     margin: 15,
     marginBottom: 0,
     padding: 0,
@@ -613,7 +524,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 3,
-    height: 60,
+    height: 70,
     justifyContent: "center",
     alignItems: "center",
   },
@@ -631,9 +542,9 @@ const styles = StyleSheet.create({
   },
   adsText: {
     fontSize: 18,
-    fontFamily: "Outfit-Bold",
+    fontFamily: "Outfit-Medium",
     color: "#888",
-    letterSpacing: 1,
+    textAlign: "center",
   },
   container: {
     flex: 1,
@@ -643,32 +554,68 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     margin: 15,
     marginBottom: 8,
-    paddingTop: 20,
-    paddingRight: 20,
-    paddingLeft: 20,
-    paddingBottom: 10,
     borderRadius: 15,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 3,
-    minHeight: 240,
+    minHeight: 280,
+    overflow: "hidden",
+  },
+  gradientBackground: {
+    flex: 1,
+    paddingTop: 8,
+    paddingBottom: 20,
+    position: "relative",
+  },
+  floatingRoundInfo: {
+    backgroundColor: "#fff",
+    marginHorizontal: 8,
+    marginTop: 5,
+    marginBottom: 15,
+    borderRadius: 50,
+    padding: 4,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 5,
   },
   roundInfoContainer: {
     flexDirection: "row",
-    justifyContent: "space-between",
     alignItems: "center",
-    marginBottom: 20,
-    paddingBottom: 15,
-    borderBottomWidth: 1,
-    borderBottomColor: "#f0f0f0",
+    paddingHorizontal: 0,
+    gap: 6,
+  },
+  contentSection: {
+    flex: 1,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    paddingHorizontal: 0,
+  },
+  sideCircle: {
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+    borderWidth: 2,
+    borderColor: "#000",
+    backgroundColor: "transparent",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  circleIcon: {
+    width: 50,
+    height: 50,
+    resizeMode: "contain",
   },
   roundSection: {
     alignItems: "flex-start",
+    marginLeft: 0,
   },
   roundNumber: {
-    fontSize: 24,
+    fontSize: 18,
     fontFamily: "HindSiliguri-Bold",
     color: "#333",
   },
@@ -677,78 +624,59 @@ const styles = StyleSheet.create({
     fontFamily: "HindSiliguri-Medium",
     color: "#666",
   },
-  timerSectionRow: {
-    flexDirection: "row",
+  timerSection: {
     alignItems: "center",
-    gap: 8,
-  },
-  timerContainerInline: {
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: "#f8f9fa",
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 8,
-    borderWidth: 2,
-    borderColor: "#007AFF",
-    marginLeft: 6,
-    minWidth: 110,
-    justifyContent: "center",
-  },
-  timerClockIcon: {
-    fontSize: 18,
-    marginRight: 4,
-    color: "#007AFF",
-  },
-  timerText: {
-    fontSize: 20,
-    fontFamily: "HindSiliguri-Bold",
-    color: "#007AFF",
-    letterSpacing: 1,
   },
   timerLabel: {
-    fontSize: 12,
+    fontSize: 10,
     fontFamily: "HindSiliguri-Medium",
     color: "#666",
+    marginBottom: 6,
+  },
+  timerDigitsContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 2,
+  },
+  digitContainer: {
+    backgroundColor: "#000",
+    borderRadius: 6,
+    paddingHorizontal: 6,
+    paddingVertical: 4,
+    alignItems: "center",
+  },
+  digitText: {
+    fontSize: 16,
+    fontFamily: "HindSiliguri-Bold",
+    color: "#fff",
+  },
+  colonContainer: {
+    paddingHorizontal: 4,
+  },
+  colonText: {
+    fontSize: 16,
+    fontFamily: "HindSiliguri-Bold",
+    color: "#000",
   },
   roundInfoDivider: {
     width: 1,
-    height: 38,
+    height: 60,
     backgroundColor: "#6c6a6aff",
-    marginHorizontal: 16,
+    marginHorizontal: 4,
     alignSelf: "center",
   },
-  graphContainer: {
+  horizontalLinesContainer: {
     flex: 1,
-    position: "relative",
-    overflow: "hidden",
+    justifyContent: "space-evenly",
+    paddingHorizontal: 0,
+    paddingVertical: 20,
   },
-  gridLines: {
-    position: "absolute",
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    zIndex: 0,
+  horizontalLine: {
+    height: 3,
+    width: "100%",
+    marginVertical: 8,
   },
-  gridLine: {
-    position: "absolute",
-    left: 15,
-    right: 15,
-    height: 1,
-    backgroundColor: "#f5f5f5",
-  },
-  svgContainer: {
-    position: "absolute",
-    top: 0,
-    left: 15,
-    right: 15,
-    bottom: 0,
-    zIndex: 1,
-  },
-  svg: {
-    flex: 1,
-  },
+
   colorLabels: {
     position: "absolute",
     left: 5,
@@ -765,24 +693,10 @@ const styles = StyleSheet.create({
     textShadowRadius: 2,
   },
   colorSelectionCard: {
-    backgroundColor: "#fff",
-    margin: 15,
-    marginTop: 10,
+    margin: 0,
+    marginTop: 0,
     marginBottom: 0,
-    padding: 15,
-    borderRadius: 15,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
-  },
-  sectionTitle: {
-    fontSize: 14,
-    fontFamily: "HindSiliguri-Bold",
-    color: "#333",
-    marginBottom: 15,
-    textAlign: "center",
+    padding: 10,
   },
   colorButtons: {
     flexDirection: "row",
@@ -794,7 +708,7 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingVertical: 12,
     paddingHorizontal: 8,
-    borderRadius: 12,
+    borderRadius: 25,
     alignItems: "center",
     maxWidth: 110,
   },
@@ -804,12 +718,19 @@ const styles = StyleSheet.create({
     color: "#fff",
     textAlign: "center",
   },
+  sectionTitle: {
+    fontSize: 16,
+    fontFamily: "HindSiliguri-Bold",
+    color: "#333",
+    marginBottom: 10,
+    textAlign: "center",
+  },
 
   recentBetsCard: {
     backgroundColor: "#fff",
-    margin: 15,
-    marginTop: 15,
-    padding: 20,
+    margin: 10,
+    marginTop: 20,
+    padding: 10,
     borderRadius: 15,
     marginBottom: 100,
   },
@@ -817,7 +738,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginBottom: 15,
+    marginBottom: 0,
   },
   allBetsText: {
     fontSize: 14,
@@ -826,75 +747,56 @@ const styles = StyleSheet.create({
   },
   betHistoryItem: {
     flexDirection: "row",
-    alignItems: "flex-start",
-    paddingVertical: 16,
-    paddingHorizontal: 12,
+    alignItems: "center",
+    paddingVertical: 18,
+    paddingHorizontal: 0,
     borderBottomWidth: 1,
     borderBottomColor: "#f0f0f0",
-    backgroundColor: "#fafafa",
-    marginBottom: 8,
-    borderRadius: 10,
-  },
-  profileIconContainer: {
-    marginRight: 12,
-    alignItems: "center",
-  },
-  profileIcon: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: "#fff",
-    borderWidth: 2,
-    alignItems: "center",
-    justifyContent: "center",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.1,
-    shadowRadius: 2,
-    elevation: 2,
-  },
-  profileIconText: {
-    fontSize: 18,
-  },
-  betDetailsContainer: {
-    flex: 1,
-  },
-  betDetailRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
     marginBottom: 6,
   },
-  betLabel: {
-    fontSize: 12,
+  betLogo: {
+    width: 40,
+    height: 40,
+    marginRight: 10,
+  },
+  roundDateSection: {
+    flex: 1,
+    marginRight: 8,
+  },
+  roundText: {
+    fontSize: 16,
     fontFamily: "HindSiliguri-Medium",
-    color: "#666",
-    flex: 1,
+    color: "#222",
+    marginBottom: 2,
   },
-  betValue: {
-    fontSize: 12,
+  dateTimeText: {
+    fontSize: 14,
     fontFamily: "HindSiliguri-Regular",
-    color: "#333",
-    flex: 1,
-    textAlign: "right",
+    color: "#666",
   },
-  winningNumberContainer: {
+  winnersSection: {
+    alignItems: "flex-end",
+  },
+  winnersText: {
+    fontSize: 14,
+    fontFamily: "HindSiliguri-Medium",
+    color: "#333",
+    marginBottom: 4,
+  },
+  winnerColorRow: {
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "flex-end",
     gap: 6,
   },
-  winningNumberText: {
+  winnerLabel: {
     fontSize: 12,
-    fontFamily: "HindSiliguri-Bold",
-    color: "#333",
+    fontFamily: "HindSiliguri-Regular",
+    color: "#666",
   },
-  colorIndicator: {
-    width: 16,
-    height: 16,
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: "#fff",
+  winnerColorBox: {
+    width: 20,
+    height: 20,
+    borderRadius: 20,
   },
   modalOverlay: {
     flex: 1,
@@ -948,22 +850,22 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   betAmountLabelLeft: {
-    fontSize: 16,
-    fontFamily: "HindSiliguri-Medium",
+    fontSize: 18,
+    fontFamily: "HindSiliguri-Bold",
     color: "#333",
     textAlign: "left",
   },
   amountInput: {
-    backgroundColor: "#f8f9fa",
-    borderRadius: 12,
+    backgroundColor: "#ededed",
+    borderRadius: 24,
     paddingHorizontal: 16,
     paddingVertical: 16,
-    fontSize: 14,
+    fontSize: 16,
     fontFamily: "HindSiliguri-Regular",
     borderWidth: 1,
-    borderColor: "#e9ecef",
+    borderColor: "#000000",
     marginBottom: 24,
-    textAlign: "center",
+    textAlign: "left",
     width: "100%",
   },
   actionButtons: {
@@ -976,10 +878,10 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#f8f9fa",
     paddingVertical: 12,
-    borderRadius: 12,
+    borderRadius: 24,
     alignItems: "center",
     borderWidth: 1,
-    borderColor: "#e9ecef",
+    borderColor: "#000000",
   },
   cancelBtnText: {
     fontSize: 16,
@@ -990,7 +892,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#eb01f6",
     paddingVertical: 12,
-    borderRadius: 12,
+    borderRadius: 24,
     alignItems: "center",
   },
   confirmBtnText: {
@@ -1081,8 +983,8 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontFamily: "HindSiliguri-Bold",
   },
-    bottomLogoContainer: {
-    alignItems: 'center',
+  bottomLogoContainer: {
+    alignItems: "center",
     marginTop: 15,
     paddingBottom: 10,
   },
@@ -1091,8 +993,8 @@ const styles = StyleSheet.create({
     height: 35,
   },
   victorLogo: {
-    width: 100,
-    height: 30,
+    width: 140,
+    height: 40,
     marginTop: 10,
   },
 });

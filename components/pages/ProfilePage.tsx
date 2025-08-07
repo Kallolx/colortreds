@@ -956,7 +956,7 @@ const styles = StyleSheet.create({
   },
   menuText: {
     flex: 1,
-    fontSize: 14,
+    fontSize: 18,
     fontFamily: 'HindSiliguri-Regular',
     color: '#333',
   },

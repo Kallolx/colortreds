@@ -1,5 +1,5 @@
 import React from "react";
-import { StyleSheet, Text, TouchableOpacity, View, Image } from "react-native";
+import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import Svg, { Path } from "react-native-svg";
 
 interface BottomNavigationProps {
@@ -87,8 +87,8 @@ export default function BottomNavigation({
   };
 
   const getIconColor = (tab: string) => {
-    // All icons remain white regardless of active state
-    return "#ffffff";
+    if (tab === "trade") return undefined; // Trade icon is image, not SVG
+    return activeTab === tab ? "#ffffff" : "#000000";
   };
 
   const renderNavItem = (
@@ -128,6 +128,7 @@ export default function BottomNavigation({
             styles.navLabel,
             isActive && styles.activeNavLabel,
             isMiddle && styles.middleNavLabel,
+            !isActive && !isMiddle && styles.inactiveNavLabel,
           ]}
         >
           {label}
@@ -231,12 +232,16 @@ const styles = StyleSheet.create({
   navLabel: {
     fontSize: 14,
     fontFamily: 'HindSiliguri-Bold',
-    color: "#ffb366",
+    color: "#000000",
     marginTop: 6,
     textAlign: "center",
   },
   activeNavLabel: {
     color: "#ffffff",
+    fontFamily: "HindSiliguri-Bold",
+  },
+  inactiveNavLabel: {
+    color: "#000000",
     fontFamily: "HindSiliguri-Bold",
   },
   middleNavLabel: {

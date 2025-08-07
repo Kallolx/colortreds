@@ -1,25 +1,37 @@
-import { useState } from 'react';
-import { Alert, Image, Modal, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { Image } from "expo-image";
+import { useState } from "react";
+import {
+  Alert,
+  Dimensions,
+  Modal,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from "react-native";
+
+const { height: screenHeight } = Dimensions.get("window");
 
 interface PaymentMethod {
   id: string;
   name: string;
-  type: 'mobile' | 'card';
+  type: "mobile" | "card";
   icon: string;
 }
 
 const methodImages: Record<string, any> = {
-  bkash: require('../../assets/images/bkash.png'),
-  nagad: require('../../assets/images/nagad.png'),
-  rocket: require('../../assets/images/rocket.png'),
-  upay: require('../../assets/images/upay.png'),
+  bkash: require("../../assets/images/bkash.png"),
+  nagad: require("../../assets/images/nagad.png"),
+  rocket: require("../../assets/images/rocket.png"),
+  upay: require("../../assets/images/upay.png"),
 };
 
 const paymentMethods: PaymentMethod[] = [
-  { id: 'bkash', name: 'bKash', type: 'mobile', icon: '' },
-  { id: 'nagad', name: 'Nagad', type: 'mobile', icon: '' },
-  { id: 'rocket', name: 'Rocket', type: 'mobile', icon: '' },
-  { id: 'upay', name: 'Upay', type: 'mobile', icon: '' },
+  { id: "bkash", name: "bKash", type: "mobile", icon: "" },
+  { id: "nagad", name: "Nagad", type: "mobile", icon: "" },
+  { id: "rocket", name: "Rocket", type: "mobile", icon: "" },
+  { id: "upay", name: "Upay", type: "mobile", icon: "" },
 ];
 
 interface WithdrawData {
@@ -29,91 +41,99 @@ interface WithdrawData {
 
 interface WithdrawModalProps {
   visible: boolean;
+  paymentMethod: PaymentMethod | null;
   onClose: () => void;
   onSubmit: (data: WithdrawData) => void;
 }
 
-export default function WithdrawModal({ visible, onClose, onSubmit }: WithdrawModalProps) {
-  const [amount, setAmount] = useState('');
-  const [userNumber, setUserNumber] = useState('');
-  const [selectedMethod, setSelectedMethod] = useState<PaymentMethod | null>(null);
+export default function WithdrawModal({
+  visible,
+  paymentMethod,
+  onClose,
+  onSubmit,
+}: WithdrawModalProps) {
+  const [amount, setAmount] = useState("");
+  const [userNumber, setUserNumber] = useState("");
 
   const handleSubmit = () => {
     if (!amount || !userNumber) {
-      Alert.alert('Error', 'Please fill all required fields');
+      Alert.alert("Error", "Please fill all required fields");
       return;
     }
     onSubmit({ amount, userNumber });
-    setAmount('');
-    setUserNumber('');
-    setSelectedMethod(null);
+    setAmount("");
+    setUserNumber("");
+  };
+
+  const handleClose = () => {
+    setAmount("");
+    setUserNumber("");
+    onClose();
   };
 
   return (
-    <Modal animationType="slide" transparent visible={visible} onRequestClose={onClose}>
+    <Modal
+      animationType="slide"
+      transparent
+      visible={visible}
+      onRequestClose={onClose}
+    >
       <View style={styles.modalOverlay}>
         <View style={styles.modalContent}>
-          <View style={styles.modalHeader}>
-            <Text style={styles.modalTitle}>Withdraw Funds</Text>
+          {/* Header with close button and title */}
+          <View style={styles.headerSection}>
+            <View style={styles.headerBar} />
+            <View style={styles.headerRow}>
+              <Text style={styles.headerTitle}>উত্তোলন</Text>
+              <Text style={styles.accountInfo}>
+                <Text style={styles.accountLabel}>অ্যাকাউন্ট: </Text>
+                <Text style={styles.accountName}>{paymentMethod?.name}</Text>
+              </Text>
+            </View>
           </View>
 
           <View style={styles.modalBody}>
-            {!selectedMethod ? (
+            {paymentMethod && (
               <>
-                <Text style={styles.inputLabel}>Select Payment Method</Text>
-                <View style={styles.methodGrid}>
-                  {paymentMethods.map((method) => (
-                    <TouchableOpacity
-                      key={method.id}
-                      style={styles.methodCard}
-                      onPress={() => setSelectedMethod(method)}
-                    >
-                      <Image source={methodImages[method.id]} style={styles.methodCardImage} resizeMode="contain" />
-                    </TouchableOpacity>
-                  ))}
-                </View>
-              </>
-            ) : (
-              <>
-                <View style={styles.selectedMethodContainer}>
-                  <Image source={methodImages[selectedMethod.id]} style={styles.selectedMethodImage} resizeMode="contain" />
-                  <View style={styles.selectedMethodInfo}>
-                    <Text style={styles.selectedMethodName}>{selectedMethod.name}</Text>
-                    <TouchableOpacity onPress={() => setSelectedMethod(null)}>
-                      <Text style={styles.changeMethodText}>Change Method</Text>
-                    </TouchableOpacity>
-                  </View>
-                </View>
-                <Text style={styles.inputLabel}>Withdraw Amount</Text>
-                <TextInput
-                  style={styles.input}
-                  value={amount}
-                  onChangeText={setAmount}
-                  placeholder="Enter amount"
-                  keyboardType="numeric"
-                  placeholderTextColor="#999"
-                />
-
-                <Text style={styles.inputLabel}>Your {selectedMethod.name} Number</Text>
                 <TextInput
                   style={styles.input}
                   value={userNumber}
                   onChangeText={setUserNumber}
-                  placeholder="01XXXXXXXXX"
+                  placeholder={`আপনার ${paymentMethod.name} নম্বর লিখুন`}
                   keyboardType="phone-pad"
+                  placeholderTextColor="#999"
+                />
+                <TextInput
+                  style={styles.input}
+                  value={amount}
+                  onChangeText={setAmount}
+                  placeholder="সর্বনিম্ন 100 থেকে সর্বোচ্চ 10,000 টাকা"
+                  keyboardType="numeric"
                   placeholderTextColor="#999"
                 />
 
                 <View style={styles.modalButtons}>
-                  <TouchableOpacity style={styles.cancelButton} onPress={onClose}>
-                    <Text style={styles.cancelButtonText}>Cancel</Text>
+                  <TouchableOpacity
+                    style={styles.cancelButton}
+                    onPress={handleClose}
+                  >
+                    <Text style={styles.cancelButtonText}>বাতিল</Text>
                   </TouchableOpacity>
-                  <TouchableOpacity style={styles.confirmButton} onPress={handleSubmit}>
-                    <Text style={styles.confirmButtonText}>Withdraw</Text>
+                  <TouchableOpacity
+                    style={styles.confirmButton}
+                    onPress={handleSubmit}
+                  >
+                    <Text style={styles.confirmButtonText}>নিশ্চিত</Text>
                   </TouchableOpacity>
                 </View>
               </>
             )}
+          </View>
+          <View style={styles.headerSection}>
+            <Image
+              source={require("../../assets/images/victor-logo.png")}
+              style={styles.victorLogo}
+            />
           </View>
         </View>
       </View>
@@ -122,107 +142,130 @@ export default function WithdrawModal({ visible, onClose, onSubmit }: WithdrawMo
 }
 
 const styles = StyleSheet.create({
+  victorLogo: {
+    width: 140,
+    height: 40,
+  },
   modalOverlay: {
     flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    justifyContent: 'flex-end',
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    justifyContent: "flex-end",
   },
   modalContent: {
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
     borderTopLeftRadius: 30,
     borderTopRightRadius: 30,
-    paddingTop: 25,
-    paddingHorizontal: 25,
-    paddingBottom: 45,
-    minHeight: 400,
+    paddingTop: 10,
+    paddingHorizontal: 15,
+    paddingBottom: 20,
   },
   modalHeader: {
-    alignItems: 'center',
+    alignItems: "center",
     borderBottomWidth: 1,
-    borderBottomColor: '#f0f0f0',
+    borderBottomColor: "#f0f0f0",
   },
   modalTitle: {
     fontSize: 24,
-    fontFamily: 'Outfit-Bold',
-    color: '#333',
+    fontFamily: "Outfit-Bold",
+    color: "#333",
     marginBottom: 15,
   },
   modalBody: {
     paddingBottom: 20,
+    paddingTop: 10,
+  },
+  headerSection: {
+    alignItems: "center",
+    marginBottom: 0,
+  },
+  headerBar: {
+    width: 40,
+    height: 4,
+    backgroundColor: "#D0D0D0",
+    borderRadius: 2,
+    marginBottom: 15,
+  },
+  headerRow: {
+    width: "100%",
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+
+  headerTitle: {
+    fontSize: 20,
+    fontFamily: "HindSiliguri-Bold",
+    color: "#1A1A1A",
+    marginBottom: 4,
+  },
+  accountInfo: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  accountLabel: {
+    fontSize: 20,
+    fontFamily: "HindSiliguri-Regular",
+    color: "#666666",
+  },
+  accountName: {
+    fontSize: 20,
+    fontFamily: "HindSiliguri-SemiBold",
+    color: "#007AFF",
   },
   inputLabel: {
     fontSize: 16,
-    fontFamily: 'Outfit-SemiBold',
-    color: '#333',
+    fontFamily: "Outfit-SemiBold",
+    color: "#333",
     marginBottom: 10,
     marginTop: 15,
   },
   input: {
-    backgroundColor: '#f8f9fa',
-    borderRadius: 12,
-    paddingHorizontal: 20,
-    paddingVertical: 15,
-    fontSize: 16,
-    fontFamily: 'Outfit-Medium',
-    borderWidth: 2,
-    borderColor: '#e9ecef',
-    marginBottom: 5,
+    borderWidth: 1,
+    borderColor: "#000",
+    borderRadius: 50,
+    paddingHorizontal: 24,
+    paddingVertical: 16,
+    fontSize: 18,
+    backgroundColor: "#ededed",
+    fontFamily: "HindSiliguri-Medium",
+    marginBottom: 10,
   },
   modalButtons: {
-    flexDirection: 'row',
-    gap: 15,
-    marginTop: 20,
+    flexDirection: "row",
+    marginTop: 10,
   },
   cancelButton: {
     flex: 1,
-    backgroundColor: '#f8f9fa',
-    paddingVertical: 18,
-    borderRadius: 15,
-    alignItems: 'center',
-    borderWidth: 2,
-    borderColor: '#e9ecef',
+    backgroundColor: "#F5F5F5",
+    paddingVertical: 12,
+    borderRadius: 24,
+    marginRight: 8,
+    borderWidth: 1,
+    borderColor: "#000",
+    alignItems: "center",
   },
   cancelButtonText: {
-    fontSize: 16,
-    fontFamily: 'Outfit-SemiBold',
-    color: '#666',
+    fontSize: 18,
+    fontFamily: "HindSiliguri-Bold",
+    color: "#666666",
   },
   confirmButton: {
     flex: 1,
-    backgroundColor: '#007AFF',
-    paddingVertical: 18,
-    borderRadius: 15,
-    alignItems: 'center',
+    backgroundColor: "#eb01f6",
+    paddingVertical: 12,
+    borderRadius: 24,
+    marginLeft: 8,
+    alignItems: "center",
   },
   confirmButtonText: {
-    fontSize: 16,
-    fontFamily: 'Outfit-SemiBold',
-    color: '#fff',
-  },
-  methodGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'space-between',
-    marginBottom: 20,
-  },
-  methodCard: {
-    width: '47%',
-    backgroundColor: '#f8f9fa',
-    padding: 20,
-    borderRadius: 15,
-    alignItems: 'center',
-    borderWidth: 2,
-    borderColor: '#e9ecef',
-    marginBottom: 15,
-  },
-  methodCardImage: {
-    width: 128,
-    height: 56,
+    fontSize: 18,
+    fontFamily: "HindSiliguri-Bold",
+    color: "white",
   },
   selectedMethodContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#f8f9fa',
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#f8f9fa",
     padding: 15,
     borderRadius: 12,
     marginBottom: 15,
@@ -237,13 +280,13 @@ const styles = StyleSheet.create({
   },
   selectedMethodName: {
     fontSize: 16,
-    color: '#333',
-    fontFamily: 'Outfit-SemiBold',
+    color: "#333",
+    fontFamily: "Outfit-SemiBold",
     marginBottom: 4,
   },
   changeMethodText: {
-    color: '#007AFF',
+    color: "#007AFF",
     fontSize: 13,
-    fontFamily: 'Outfit-Medium',
+    fontFamily: "Outfit-Medium",
   },
 });
