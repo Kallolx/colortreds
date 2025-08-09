@@ -36,26 +36,19 @@ export default function HomePage() {
   const [betAmount, setBetAmount] = useState("");
   const [lastBetColor, setLastBetColor] = useState<string | null>(null);
   // Consent modal state
-  const [showConsentModal, setShowConsentModal] = useState(false);
-  // Show consent modal only once
-  useEffect(() => {
-    (async () => {
-      const consent = await AsyncStorage.getItem("userConsentGiven");
-      if (!consent) {
-        setShowConsentModal(true);
-      }
-    })();
-  }, []);
+  const [showConsentModal, setShowConsentModal] = useState(true);
+  const [showTradeEndModal, setShowTradeEndModal] = useState(false);
 
   const handleConsent = async (accepted: boolean) => {
     if (accepted) {
       await AsyncStorage.setItem("userConsentGiven", "true");
     }
     setShowConsentModal(false);
+    setTimeout(() => setShowTradeEndModal(true), 300); // Show second modal after a short delay
   };
 
   // Round and Timer states
-  const [currentRound, setCurrentRound] = useState("#1548");
+  const [currentRound, setCurrentRound] = useState("#15448");
   const [timeRemaining, setTimeRemaining] = useState(29 * 60 + 59); // 29:59 in seconds
 
   const colorRaces: ColorRace[] = [
@@ -166,6 +159,13 @@ export default function HomePage() {
     setSelectedColor(null);
   };
 
+  useEffect(() => {
+    if (showTradeEndModal) {
+      const timer = setTimeout(() => setShowTradeEndModal(false), 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [showTradeEndModal]);
+
   return (
     <>
       {/* Consent Modal */}
@@ -179,11 +179,15 @@ export default function HomePage() {
           <View style={styles.consentModalContent}>
             <Text style={styles.consentModalText}>
               আপনি এই অ্যাপ ব্যবহারের{" "}
-              <Text style={{ color: "#a600a6", fontWeight: "bold" }}>
+              <Text
+                style={{ color: "#FF00FF", fontFamily: "HindSiliguri-Bold" }}
+              >
                 শর্তাবলী
               </Text>
               ,{" "}
-              <Text style={{ color: "#d1006b", fontWeight: "bold" }}>
+              <Text
+                style={{ color: "#FF00FF", fontFamily: "HindSiliguri-Bold" }}
+              >
                 গোপনীয়তা নীতি
               </Text>{" "}
               এবং অ্যাড দেখানোর নিয়মকে মেনে নিয়ে অ্যাপটিতে প্রবেশ করছেন?
@@ -202,6 +206,28 @@ export default function HomePage() {
                 <Text style={styles.consentButtonTextYes}>হ্যাঁ</Text>
               </TouchableOpacity>
             </View>
+          </View>
+        </View>
+      </Modal>
+
+      {/* Trade End Modal */}
+      <Modal
+        visible={showTradeEndModal}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setShowTradeEndModal(false)}
+      >
+        <View style={styles.consentModalOverlay}>
+          <View style={styles.consentModalContent}>
+            <Text style={styles.consentModalText}>
+              আজকের ট্রেড সমাপ্ত হয়েছে। কালকে সকাল ৯টা থেকে আবার শুরু করুন।
+              {"\n"}
+              <Text
+                style={{ color: "#FF00FF", fontFamily: "HindSiliguri-Bold" }}
+              >
+                শর্তাবলী
+              </Text>
+            </Text>
           </View>
         </View>
       </Modal>
@@ -240,7 +266,7 @@ export default function HomePage() {
                   {/* Vertical Divider */}
                   <View style={styles.roundInfoDivider} />
                   <View style={styles.timerSection}>
-                    <Text style={styles.timerLabel}>অবশিষ্ট সময়</Text>
+                    <Text style={styles.timerLabel}>ট্রেড স্থায়ী মিনিট</Text>
                     <View style={styles.timerDigitsContainer}>
                       {formatTime(timeRemaining)
                         .split("")
@@ -321,7 +347,9 @@ export default function HomePage() {
 
         {/* Color Selection */}
         <View style={styles.colorSelectionCard}>
-          <Text style={styles.sectionTitle}>আপনার রঙ নির্বাচন করুন</Text>
+          <Text style={styles.sectionTitle2}>
+            অনুগ্রহ করে ট্রেডের সম্ভাব্য রঙ নির্বাচন করুন।
+          </Text>
           <View style={styles.colorButtons}>
             {colorRaces.map((race, index) => (
               <TouchableOpacity
@@ -342,7 +370,7 @@ export default function HomePage() {
         </View>
 
         {/* Ads Section (before Recent Bets) */}
-        <View style={styles.adsCard}>
+        <View style={styles.adsCard2}>
           <Text style={styles.adsText}>
             our company (Victor Earn Way) promotional ADS
           </Text>
@@ -351,17 +379,9 @@ export default function HomePage() {
         {/* Recent Bets */}
         <View style={styles.recentBetsCard}>
           <View style={styles.betsHeader}>
-            <Text
-              style={[
-                styles.sectionTitle,
-                { marginBottom: 0, textAlign: "left" },
-              ]}
-            >
+            <Text style={[styles.sectionTitle]}>
               সর্বশেষ ৫টি ট্রেড এর তালিকা সমূহ
             </Text>
-            <TouchableOpacity>
-              <Text style={styles.allBetsText}>সকল ট্রেড</Text>
-            </TouchableOpacity>
           </View>
           {betHistory.map((bet, index) => (
             <View key={index} style={styles.betHistoryItem}>
@@ -430,21 +450,18 @@ export default function HomePage() {
         >
           <View style={styles.modalOverlay}>
             <View style={styles.modalContent}>
-              {/* Color Icon at top */}
-              <View style={styles.colorRow}>
-                <View
-                  style={[
-                    styles.colorIcon,
-                    {
-                      backgroundColor:
-                        selectedColor?.backgroundColor || "#ff8c00",
-                    },
-                  ]}
-                >
-                  <Svg width={30} height={30} viewBox="0 0 24 24" fill="none">
+              {/* Color Icon at top, stacked column, black circle, big colored star, colored name tag */}
+              <View
+                style={[
+                  styles.colorRow,
+                  { flexDirection: "column", alignItems: "center" },
+                ]}
+              >
+                <View style={[styles.colorIcon, { backgroundColor: "#000" }]}>
+                  <Svg width={54} height={54} viewBox="0 0 24 24" fill="none">
                     <Path
                       d="M12 2L15 8.5L22 9.3L17 14.1L18.2 21L12 17.8L5.8 21L7 14.1L2 9.3L9 8.5L12 2Z"
-                      fill="#000000ff"
+                      fill={selectedColor?.backgroundColor || "#ff8c00"}
                     />
                   </Svg>
                 </View>
@@ -465,14 +482,29 @@ export default function HomePage() {
               </View>
 
               {/* Amount Input */}
-              <TextInput
-                style={styles.amountInput}
-                value={betAmount}
-                onChangeText={setBetAmount}
-                placeholder="সর্বনিম্ন ৫০ টেকে সর্বোচ্চ ৫,০০০"
-                keyboardType="numeric"
-                placeholderTextColor="#999"
-              />
+              <View style={{ position: 'relative', width: '100%', justifyContent: 'center' }}>
+                <TextInput
+                  style={[styles.amountInput, { paddingRight: 60 }]}
+                  value={betAmount}
+                  onChangeText={setBetAmount}
+                  placeholder="সর্বনিম্ন ৫০ টেকে সর্বোচ্চ ৫,০০০"
+                  keyboardType="numeric"
+                  placeholderTextColor="#999"
+                />
+                <Text
+                  style={{
+                    position: 'absolute',
+                    right: 25,
+                    top: 15,
+                    color: '#000',
+                    fontFamily: 'HindSiliguri-Medium',
+                    fontSize: 18,
+                    zIndex: 2,
+                  }}
+                >
+                  টাকা
+                </Text>
+              </View>
 
               {/* Action Buttons */}
               <View style={styles.actionButtons}>
@@ -517,6 +549,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#dcd9d8ff",
     margin: 15,
     marginBottom: 0,
+    marginTop: 5,
     padding: 0,
     borderRadius: 12,
     shadowColor: "#000",
@@ -528,17 +561,31 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
+  adsCard2: {
+    backgroundColor: "#dcd9d8ff",
+    margin: 15,
+    marginBottom: 0,
+    marginTop: 10,
+    padding: 0,
+    borderRadius: 12,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+    height: 100,
+    justifyContent: "center",
+    alignItems: "center",
+  },
   colorRow: {
-    flexDirection: "row",
+    flexDirection: "column",
     alignItems: "center",
     justifyContent: "center",
-    marginBottom: 20,
   },
   selectedColorNameBig: {
     fontSize: 32,
     fontFamily: "HindSiliguri-Bold",
     color: "#ff8c00",
-    marginLeft: 12,
   },
   adsText: {
     fontSize: 18,
@@ -554,13 +601,14 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     margin: 15,
     marginBottom: 8,
+    marginTop: 10,
     borderRadius: 15,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 3,
-    minHeight: 280,
+    minHeight: 240,
     overflow: "hidden",
   },
   gradientBackground: {
@@ -573,7 +621,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     marginHorizontal: 8,
     marginTop: 5,
-    marginBottom: 15,
+    marginBottom: 0,
     borderRadius: 50,
     padding: 4,
     shadowColor: "#000",
@@ -666,10 +714,9 @@ const styles = StyleSheet.create({
     alignSelf: "center",
   },
   horizontalLinesContainer: {
-    flex: 1,
     justifyContent: "space-evenly",
     paddingHorizontal: 0,
-    paddingVertical: 20,
+    paddingVertical: 0,
   },
   horizontalLine: {
     height: 3,
@@ -696,24 +743,25 @@ const styles = StyleSheet.create({
     margin: 0,
     marginTop: 0,
     marginBottom: 0,
-    padding: 10,
+    padding: 0,
   },
   colorButtons: {
     flexDirection: "row",
     justifyContent: "space-between",
     gap: 8,
-    paddingHorizontal: 5,
+    paddingHorizontal: 15,
+    paddingVertical: 0,
   },
   colorButton: {
     flex: 1,
-    paddingVertical: 12,
+    paddingVertical: 10,
     paddingHorizontal: 8,
     borderRadius: 25,
     alignItems: "center",
     maxWidth: 110,
   },
   colorButtonText: {
-    fontSize: 18,
+    fontSize: 16,
     fontFamily: "HindSiliguri-Bold",
     color: "#fff",
     textAlign: "center",
@@ -721,15 +769,22 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 16,
     fontFamily: "HindSiliguri-Bold",
+    color: "#000",
+    marginBottom: 0,
+    textAlign: "center",
+  },
+
+  sectionTitle2: {
+    fontSize: 12,
+    fontFamily: "HindSiliguri-Medium",
     color: "#333",
-    marginBottom: 10,
+    marginBottom: 4,
     textAlign: "center",
   },
 
   recentBetsCard: {
-    backgroundColor: "#fff",
     margin: 10,
-    marginTop: 20,
+    marginTop: 10,
     padding: 10,
     borderRadius: 15,
     marginBottom: 100,
@@ -739,11 +794,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
     marginBottom: 0,
-  },
-  allBetsText: {
-    fontSize: 14,
-    fontFamily: "HindSiliguri-SemiBold",
-    color: "#007AFF",
+    fontFamily: "HindSiliguri-Bold",
   },
   betHistoryItem: {
     flexDirection: "row",
@@ -751,7 +802,7 @@ const styles = StyleSheet.create({
     paddingVertical: 18,
     paddingHorizontal: 0,
     borderBottomWidth: 1,
-    borderBottomColor: "#f0f0f0",
+    borderBottomColor: "#e3e0e0",
     marginBottom: 6,
   },
   betLogo: {
@@ -830,6 +881,8 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.3,
     shadowRadius: 8,
     elevation: 8,
+    margin: 0,
+    padding: 0,
   },
   selectedColorName: {
     fontSize: 24,
@@ -857,7 +910,7 @@ const styles = StyleSheet.create({
   },
   amountInput: {
     backgroundColor: "#ededed",
-    borderRadius: 24,
+    borderRadius: 50,
     paddingHorizontal: 16,
     paddingVertical: 16,
     fontSize: 16,
@@ -878,7 +931,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#f8f9fa",
     paddingVertical: 12,
-    borderRadius: 24,
+    borderRadius: 50,
     alignItems: "center",
     borderWidth: 1,
     borderColor: "#000000",
@@ -892,7 +945,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#eb01f6",
     paddingVertical: 12,
-    borderRadius: 24,
+    borderRadius: 50,
     alignItems: "center",
   },
   confirmBtnText: {
@@ -906,12 +959,7 @@ const styles = StyleSheet.create({
     paddingTop: 8,
     width: "100%",
   },
-  fromText: {
-    fontSize: 10,
-    color: "#999",
-    fontFamily: "HindSiliguri-Regular",
-    marginBottom: 4,
-  },
+
   logoRow: {
     flexDirection: "row",
     alignItems: "center",
@@ -940,18 +988,19 @@ const styles = StyleSheet.create({
   consentModalContent: {
     backgroundColor: "#fff",
     borderRadius: 18,
-    padding: 24,
+    padding: 20,
     alignItems: "center",
     maxWidth: 340,
     width: "100%",
     elevation: 10,
   },
+
   consentModalText: {
     fontSize: 16,
     fontFamily: "HindSiliguri-Bold",
     color: "#222",
     textAlign: "center",
-    marginBottom: 24,
+    marginBottom: 0,
     lineHeight: 26,
   },
   consentModalButtons: {

@@ -103,14 +103,30 @@ export default function WithdrawModal({
                   keyboardType="phone-pad"
                   placeholderTextColor="#999"
                 />
-                <TextInput
-                  style={styles.input}
-                  value={amount}
-                  onChangeText={setAmount}
-                  placeholder="সর্বনিম্ন 100 থেকে সর্বোচ্চ 10,000 টাকা"
-                  keyboardType="numeric"
-                  placeholderTextColor="#999"
-                />
+                <View style={{ position: 'relative', justifyContent: 'center' }}>
+                  <TextInput
+                    style={[styles.input, { paddingRight: 60 }]}
+                    value={amount}
+                    onChangeText={setAmount}
+                    placeholder="সর্বনিম্ন 100 থেকে সর্বোচ্চ 10,000"
+                    keyboardType="numeric"
+                    placeholderTextColor="#999"
+                  />
+                  <Text
+                    style={{
+                      position: 'absolute',
+                      right: 25,
+                      top: '39%',
+                      transform: [{ translateY: -12 }],
+                      color: '#000',
+                      fontFamily: 'HindSiliguri-Medium',
+                      fontSize: 18,
+                      zIndex: 2,
+                    }}
+                  >
+                    টাকা
+                  </Text>
+                </View>
 
                 <View style={styles.modalButtons}>
                   <TouchableOpacity
@@ -210,7 +226,7 @@ const styles = StyleSheet.create({
   accountName: {
     fontSize: 20,
     fontFamily: "HindSiliguri-SemiBold",
-    color: "#007AFF",
+    color: "#000",
   },
   inputLabel: {
     fontSize: 16,
@@ -238,7 +254,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#F5F5F5",
     paddingVertical: 12,
-    borderRadius: 24,
+    borderRadius: 50,
     marginRight: 8,
     borderWidth: 1,
     borderColor: "#000",
@@ -253,7 +269,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#eb01f6",
     paddingVertical: 12,
-    borderRadius: 24,
+    borderRadius: 50,
     marginLeft: 8,
     alignItems: "center",
   },

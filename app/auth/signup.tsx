@@ -1,5 +1,6 @@
-import { useRouter } from 'expo-router';
-import React, { useEffect, useRef, useState } from 'react';
+import { Ionicons } from "@expo/vector-icons";
+import { useRouter } from "expo-router";
+import React, { useEffect, useRef, useState } from "react";
 import {
   Animated,
   Dimensions,
@@ -13,73 +14,99 @@ import {
   Text,
   TextInput,
   TouchableOpacity,
-  View
-} from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+  View,
+} from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-const { width, height } = Dimensions.get('window');
+const { width, height } = Dimensions.get("window");
 
 export default function SignupScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const rotationValue = useRef(new Animated.Value(0)).current;
 
-  // State for form fields
-  const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [showSexDropdown, setShowSexDropdown] = useState(false);
-  const [selectedSex, setSelectedSex] = useState('');
-  const [showDatePicker, setShowDatePicker] = useState(false);
-  const [selectedDate, setSelectedDate] = useState('');
-  const [selectedDay, setSelectedDay] = useState('');
-  const [selectedMonth, setSelectedMonth] = useState('');
-  const [selectedYear, setSelectedYear] = useState('');
+  // Step state
+  const [step, setStep] = useState(1);
 
-  const sexOptions = ['পুরুষ', 'মহিলা', 'অন্যান্য'];
+  // Step 1 fields
+  const [fullName, setFullName] = useState("");
+  const [selectedSex, setSelectedSex] = useState("");
+  const [showSexDropdown, setShowSexDropdown] = useState(false);
+  const [selectedDate, setSelectedDate] = useState("");
+  const [showDatePicker, setShowDatePicker] = useState(false);
+  const [selectedDay, setSelectedDay] = useState("");
+  const [selectedMonth, setSelectedMonth] = useState("");
+  const [selectedYear, setSelectedYear] = useState("");
+  const [referralCode, setReferralCode] = useState("");
+
+  // Step 2 fields
+  const [email, setEmail] = useState("");
+  const [mobile, setMobile] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+
+  // Step 3 fields
+  const [profileImage, setProfileImage] = useState(null);
+
+  // Username for step 3 (use email before @ or fullName)
+  const username = email
+    ? email.split("@")[0]
+    : fullName.split(" ")[0] || "Md Rockey";
+
+  const sexOptions = ["পুরুষ", "মহিলা", "অন্যান্য"];
 
   useEffect(() => {
     const startRotation = () => {
       Animated.loop(
         Animated.timing(rotationValue, {
           toValue: 1,
-          duration: 4000, // 4 seconds for smooth rotation
+          duration: 4000,
           useNativeDriver: true,
-          easing: Easing.linear, // Linear easing for constant speed
+          easing: Easing.linear,
         })
       ).start();
     };
-
     startRotation();
   }, [rotationValue]);
 
   const rotate = rotationValue.interpolate({
     inputRange: [0, 1],
-    outputRange: ['0deg', '360deg'],
+    outputRange: ["0deg", "360deg"],
   });
 
-  const handleSignup = () => {
-    // TODO: Implement signup logic
-    router.replace('/auth/login');
+  // Date picker helpers
+  const generateDateOptions = () => {
+    const days = Array.from({ length: 31 }, (_, i) =>
+      String(i + 1).padStart(2, "0")
+    );
+    const months = [
+      { label: "জানুয়ারি", value: "01" },
+      { label: "ফেব্রুয়ারি", value: "02" },
+      { label: "মার্চ", value: "03" },
+      { label: "এপ্রিল", value: "04" },
+      { label: "মে", value: "05" },
+      { label: "জুন", value: "06" },
+      { label: "জুলাই", value: "07" },
+      { label: "আগস্ট", value: "08" },
+      { label: "সেপ্টেম্বর", value: "09" },
+      { label: "অক্টোবর", value: "10" },
+      { label: "নভেম্বর", value: "11" },
+      { label: "ডিসেম্বর", value: "12" },
+    ];
+    const currentYear = new Date().getFullYear();
+    const years = Array.from({ length: 80 }, (_, i) =>
+      String(currentYear - 18 - i)
+    );
+    return { days, months, years };
   };
+  const { days, months, years } = generateDateOptions();
 
-  const navigateToLogin = () => {
-    router.back();
-  };
+  // Step navigation
+  const handleNextStep = () => setStep(step + 1);
+  const handlePrevStep = () => setStep(step - 1);
 
-  const handleBack = () => {
-    router.back();
-  };
-
-  const handleImageUpload = () => {
-    // TODO: Implement image upload logic
-    console.log('Image upload clicked');
-  };
-
-  const selectSex = (sex: React.SetStateAction<string>) => {
-    setSelectedSex(sex);
-    setShowSexDropdown(false);
-  };
-
+  // Date select
   const handleDateSelect = () => {
     if (selectedDay && selectedMonth && selectedYear) {
       const formattedDate = `${selectedDay}/${selectedMonth}/${selectedYear}`;
@@ -88,206 +115,300 @@ export default function SignupScreen() {
     }
   };
 
-  const generateDateOptions = () => {
-    const days = Array.from({ length: 31 }, (_, i) => String(i + 1).padStart(2, '0'));
-    const months = [
-      { label: 'জানুয়ারি', value: '01' },
-      { label: 'ফেব্রুয়ারি', value: '02' },
-      { label: 'মার্চ', value: '03' },
-      { label: 'এপ্রিল', value: '04' },
-      { label: 'মে', value: '05' },
-      { label: 'জুন', value: '06' },
-      { label: 'জুলাই', value: '07' },
-      { label: 'আগস্ট', value: '08' },
-      { label: 'সেপ্টেম্বর', value: '09' },
-      { label: 'অক্টোবর', value: '10' },
-      { label: 'নভেম্বর', value: '11' },
-      { label: 'ডিসেম্বর', value: '12' }
-    ];
-    const currentYear = new Date().getFullYear();
-    const years = Array.from({ length: 80 }, (_, i) => String(currentYear - 18 - i));
-    
-    return { days, months, years };
+  // Sex select
+  const selectSex = (sex: string) => {
+    setSelectedSex(sex);
+    setShowSexDropdown(false);
   };
 
-  const { days, months, years } = generateDateOptions();
+  // Image upload stub
+  const handleImageUpload = () => {
+    // TODO: Implement image upload logic
+    alert("Image upload clicked");
+  };
+
+  // Signup logic (step 2)
+  const handleSignup = () => {
+    // TODO: Implement signup logic (API call etc)
+    setStep(3);
+  };
+
+  // Save info (step 3)
+  const handleSaveInfo = () => {
+    router.replace("/auth/login");
+  };
+
+  // Login link
+  const navigateToLogin = () => {
+    router.back();
+  };
+
+  // Back button
+  const handleBack = () => {
+    if (step === 1) router.back();
+    else setStep(step - 1);
+  };
 
   return (
     <View style={styles.container}>
-      {/* Background Image */}
       <ImageBackground
-        source={require('../../assets/images/onboarding-bg.png')}
+        source={require("../../assets/images/onboarding-bg.png")}
         style={styles.backgroundImage}
         resizeMode="cover"
       >
         <SafeAreaView style={styles.safeArea}>
-          {/* Top Section with Back Button and Logo */}
           <View style={styles.topSection}>
-            {/* Back Button at top */}
             <TouchableOpacity style={styles.backButton} onPress={handleBack}>
               <Text>
                 <Text style={styles.arrowIcon}>‹ </Text>
-              </Text> 
+              </Text>
             </TouchableOpacity>
-            
-            {/* Logo centered with rotation */}
             <View style={styles.logoContainer}>
               <Animated.Image
-                source={require('../../assets/images/logo.png')}
+                source={require("../../assets/images/logo.png")}
                 style={[styles.topLogo, { transform: [{ rotate }] }]}
                 resizeMode="contain"
               />
             </View>
           </View>
-
-          {/* Bottom Content Section */}
           <View style={styles.bottomSection}>
-            {/* Signup Title */}
             <Text style={styles.signupTitle}>সাইন আপ</Text>
-            
-            {/* Subtitle */}
             <Text style={styles.subtitle}>
-              আপনার নতুন একটি অ্যাকাউন্ট তৈরি করুন
+              সাইন আপ করতে ফর্মটি পূরণ করুন
             </Text>
-
-            {/* Signup Form */}
-            <ScrollView 
+            <ScrollView
               style={styles.scrollContainer}
               contentContainerStyle={styles.scrollContent}
               showsVerticalScrollIndicator={false}
             >
               <View style={styles.form}>
-                {/* Full Name Input */}
-                <View style={styles.inputGroup}>
-                  <Text style={styles.inputLabel}>পুরো নাম</Text>
-                  <TextInput
-                    style={styles.textInput}
-                    placeholder="আপনার পুরো নাম লিখুন"
-                    placeholderTextColor="#666"
-                    autoCapitalize="words"
-                  />
-                </View>
-                
-                {/* Email Input */}
-                <View style={styles.inputGroup}>
-                  <Text style={styles.inputLabel}>ইমেইল ঠিকানা</Text>
-                  <TextInput
-                    style={styles.textInput}
-                    placeholder="ইমেইল ঠিকানা লিখুন"
-                    placeholderTextColor="#666"
-                    keyboardType="email-address"
-                    autoCapitalize="none"
-                  />
-                </View>
-
-                {/* Password Input with Eye Icon */}
-                <View style={styles.inputGroup}>
-                  <Text style={styles.inputLabel}>পাসওয়ার্ড</Text>
-                  <View style={styles.passwordContainer}>
-                    <TextInput
-                      style={styles.passwordInput}
-                      placeholder="৮ সংখ্যার পাসওয়ার্ড লিখুন"
-                      placeholderTextColor="#666"
-                      secureTextEntry={!showPassword}
-                      autoCapitalize="none"
-                    />
-                    <TouchableOpacity
-                      style={styles.eyeIcon}
-                      onPress={() => setShowPassword(!showPassword)}
-                    >
-                      <Text style={styles.eyeText}>{showPassword ? '🙈' : '👁️'}</Text>
-                    </TouchableOpacity>
-                  </View>
-                </View>
-
-                {/* Confirm Password Input with Eye Icon */}
-                <View style={styles.inputGroup}>
-                  <Text style={styles.inputLabel}>পাসওয়ার্ড নিশ্চিত করুন</Text>
-                  <View style={styles.passwordContainer}>
-                    <TextInput
-                      style={styles.passwordInput}
-                      placeholder="পাসওয়ার্ড আবার লিখুন"
-                      placeholderTextColor="#666"
-                      secureTextEntry={!showConfirmPassword}
-                      autoCapitalize="none"
-                    />
-                    <TouchableOpacity
-                      style={styles.eyeIcon}
-                      onPress={() => setShowConfirmPassword(!showConfirmPassword)}
-                    >
-                      <Text style={styles.eyeText}>{showConfirmPassword ? '🙈' : '👁️'}</Text>
-                    </TouchableOpacity>
-                  </View>
-                </View>
-                
-                {/* Sex Dropdown */}
-                <View style={styles.inputGroup}>
-                  <Text style={styles.inputLabel}>লিঙ্গ</Text>
-                  <TouchableOpacity
-                    style={styles.dropdownButton}
-                    onPress={() => setShowSexDropdown(true)}
-                  >
-                    <Text style={styles.dropdownText}>
-                      {selectedSex || 'লিঙ্গ নির্বাচন করুন'}
-                    </Text>
-                    <Text style={styles.dropdownArrow}>▼</Text>
-                  </TouchableOpacity>
-                </View>
-                
-                {/* Date of Birth Picker */}
-                <View style={styles.inputGroup}>
-                  <Text style={styles.inputLabel}>জন্ম তারিখ</Text>
-                  <TouchableOpacity
-                    style={styles.dropdownButton}
-                    onPress={() => setShowDatePicker(true)}
-                  >
-                    <Text style={styles.dropdownText}>
-                      {selectedDate || 'জন্ম তারিখ নির্বাচন করুন'}
-                    </Text>
-                    <Text style={styles.dropdownArrow}>📅</Text>
-                  </TouchableOpacity>
-                </View>
-                
-                {/* Referral Code Input */}
-                <View style={styles.inputGroup}>
-                  <Text style={styles.inputLabel}>রেফারেল কোড (ঐচ্ছিক)</Text>
-                  <TextInput
-                    style={styles.textInput}
-                    placeholder="রেফারেল কোড লিখুন"
-                    placeholderTextColor="#666"
-                  />
-                </View>
-
-                {/* Profile Image Upload Section */}
-                <View style={styles.imageUploadSection}>
-                  <Text style={styles.imageUploadLabel}>প্রোফাইল ছবি</Text>
-                  <TouchableOpacity style={styles.imageUploadButton} onPress={handleImageUpload}>
-                    <View style={styles.imageUploadPlaceholder}>
-                      <Text style={styles.imageUploadIcon}>📷</Text>
-                      <Text style={styles.imageUploadText}>ছবি আপলোড করুন</Text>
+                {step === 1 && (
+                  <>
+                    {/* Full Name */}
+                    <View style={styles.inputGroup}>
+                      <Text style={styles.inputLabel}>পুরো নাম</Text>
+                      <TextInput
+                        style={styles.textInput}
+                        placeholder="আপনার পুরো নাম লিখুন"
+                        placeholderTextColor="#666"
+                        autoCapitalize="words"
+                        value={fullName}
+                        onChangeText={setFullName}
+                      />
                     </View>
-                  </TouchableOpacity>
-                </View>
-                
-                {/* Signup Button */}
-                <TouchableOpacity style={styles.signupButton} onPress={handleSignup}>
-                  <Text style={styles.signupButtonText}>অ্যাকাউন্ট তৈরি করুন</Text>
-                </TouchableOpacity>
-                
-                {/* Login Link */}
-                <View style={styles.loginContainer}>
-                  <Text style={styles.loginText}>ইতিমধ্যে অ্যাকাউন্ট আছে? </Text>
-                  <TouchableOpacity onPress={navigateToLogin}>
-                    <Text style={styles.loginLink}>লগ ইন করুন</Text>
-                  </TouchableOpacity>
-                </View>
+                    {/* Gender */}
+                    <View style={styles.inputGroup}>
+                      <Text style={styles.inputLabel}>লিঙ্গ</Text>
+                      <TouchableOpacity
+                        style={styles.dropdownButton}
+                        onPress={() => setShowSexDropdown(true)}
+                      >
+                        <Text style={styles.dropdownText}>
+                          {selectedSex || "লিঙ্গ নির্বাচন করুন"}
+                        </Text>
+                        <Text style={styles.dropdownArrow}>▼</Text>
+                      </TouchableOpacity>
+                    </View>
+                    {/* Date of Birth as 3 boxes */}
+                    <View style={styles.inputGroup}>
+                      <Text style={styles.inputLabel}>জন্ম তারিখ</Text>
+                      <View style={styles.dobRow}>
+                        <TouchableOpacity
+                          style={styles.dobBox}
+                          onPress={() => setShowDatePicker(true)}
+                        >
+                          <Text style={styles.dobBoxText}>
+                            {selectedDay || "তারিখ"}
+                          </Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity
+                          style={styles.dobBox}
+                          onPress={() => setShowDatePicker(true)}
+                        >
+                          <Text style={styles.dobBoxText}>
+                            {selectedMonth || "মাস"}
+                          </Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity
+                          style={styles.dobBox}
+                          onPress={() => setShowDatePicker(true)}
+                        >
+                          <Text style={styles.dobBoxText}>
+                            {selectedYear || "বছর"}
+                          </Text>
+                        </TouchableOpacity>
+                      </View>
+                    </View>
+                    {/* Referral Code and Next Button Side by Side */}
+                    <View style={styles.referralRow}>
+                      <View style={{ flex: 1 }}>
+                        <Text style={styles.inputLabel}>
+                          রেফারেল কোড (ঐচ্ছিক)
+                        </Text>
+                        <TextInput
+                          style={styles.referralInput}
+                          placeholder="রেফারেল কোড লিখুন"
+                          placeholderTextColor="#666"
+                          value={referralCode}
+                          onChangeText={setReferralCode}
+                        />
+                      </View>
+                      <TouchableOpacity
+                        style={styles.nextButton}
+                        onPress={handleNextStep}
+                      >
+                        <Text style={styles.nextButtonText}>পরবর্তী</Text>
+                        <Ionicons
+                          name="arrow-forward"
+                          size={22}
+                          color="#fff"
+                          style={styles.nextButtonIcon}
+                        />
+                      </TouchableOpacity>
+                    </View>
+                  </>
+                )}
+                {step === 2 && (
+                  <>
+                    {/* Email */}
+                    <View style={styles.inputGroup}>
+                      <Text style={styles.inputLabel}>ইমেইল ঠিকানা</Text>
+                      <TextInput
+                        style={styles.textInput}
+                        placeholder="ইমেইল ঠিকানা লিখুন"
+                        placeholderTextColor="#666"
+                        keyboardType="email-address"
+                        autoCapitalize="none"
+                        value={email}
+                        onChangeText={setEmail}
+                      />
+                    </View>
+                    {/* Mobile */}
+                    <View style={styles.inputGroup}>
+                      <Text style={styles.inputLabel}>মোবাইল নম্বর</Text>
+                      <TextInput
+                        style={styles.textInput}
+                        placeholder="মোবাইল নম্বর লিখুন"
+                        placeholderTextColor="#666"
+                        keyboardType="phone-pad"
+                        value={mobile}
+                        onChangeText={setMobile}
+                      />
+                    </View>
+                    {/* Password */}
+                    <View style={styles.inputGroup}>
+                      <Text style={styles.inputLabel}>পাসওয়ার্ড</Text>
+                      <View style={styles.passwordContainer}>
+                        <TextInput
+                          style={styles.passwordInput}
+                          placeholder="৮ সংখ্যার পাসওয়ার্ড লিখুন"
+                          placeholderTextColor="#666"
+                          secureTextEntry={!showPassword}
+                          autoCapitalize="none"
+                          value={password}
+                          onChangeText={setPassword}
+                        />
+                        <TouchableOpacity
+                          style={styles.eyeIcon}
+                          onPress={() => setShowPassword(!showPassword)}
+                        >
+                          <Text style={styles.eyeText}>
+                            {showPassword ? "🙈" : "👁️"}
+                          </Text>
+                        </TouchableOpacity>
+                      </View>
+                    </View>
+
+                    {/*Confirm Password */}
+                    <View style={styles.inputGroup}>
+                      <Text style={styles.inputLabel}>
+                        পাসওয়ার্ড নিশ্চিত করুন
+                      </Text>
+                      <View style={styles.passwordContainer}>
+                        <TextInput
+                          style={styles.passwordInput}
+                          placeholder="৮ সংখ্যার পাসওয়ার্ড লিখুন"
+                          placeholderTextColor="#666"
+                          secureTextEntry={!showPassword}
+                          autoCapitalize="none"
+                          value={confirmPassword}
+                          onChangeText={setConfirmPassword}
+                        />
+                        <TouchableOpacity
+                          style={styles.eyeIcon}
+                          onPress={() => setShowPassword(!showPassword)}
+                        >
+                          <Text style={styles.eyeText}>
+                            {showPassword ? "🙈" : "👁️"}
+                          </Text>
+                        </TouchableOpacity>
+                      </View>
+                    </View>
+                    {/* Create Account Button */}
+                    <TouchableOpacity
+                      style={styles.signupButton}
+                      onPress={handleSignup}
+                    >
+                      <Text style={styles.signupButtonText}>
+                        অ্যাকাউন্ট তৈরি করুন
+                      </Text>
+                    </TouchableOpacity>
+                  </>
+                )}
+                {step === 3 && (
+                  <>
+                    {/* Profile Image Upload */}
+                    <View style={styles.imageUploadSection}>
+                      <Text style={styles.imageUploadLabel}>প্রোফাইল ছবি</Text>
+                      <TouchableOpacity
+                        style={styles.imageUploadButton}
+                        onPress={handleImageUpload}
+                      >
+                        <View style={styles.imageUploadPlaceholder}>
+                          <Text style={styles.imageUploadIcon}>📷</Text>
+                          <Text style={styles.imageUploadText}>
+                            ছবি আপলোড করুন
+                          </Text>
+                        </View>
+                      </TouchableOpacity>
+                    </View>
+                    {/* Username Display */}
+                    <View style={{ alignItems: "center", marginBottom: 20 }}>
+                      <Text
+                        style={{
+                          fontSize: 20,
+                          fontFamily: "HindSiliguri-Bold",
+                          color: "#000",
+                        }}
+                      >
+                        {username}
+                      </Text>
+                    </View>
+                    {/* Save Info Button */}
+                    <TouchableOpacity
+                      style={styles.signupButton}
+                      onPress={handleSaveInfo}
+                    >
+                      <Text style={styles.signupButtonText}>সংরক্ষণ করুন</Text>
+                    </TouchableOpacity>
+                  </>
+                )}
+                {/* Login Link (only on step 1 and 2) */}
+                {(step === 1 || step === 2) && (
+                  <View style={styles.loginContainer}>
+                    <Text style={styles.loginText}>
+                      ইতিমধ্যে অ্যাকাউন্ট আছে?{" "}
+                    </Text>
+                    <TouchableOpacity onPress={navigateToLogin}>
+                      <Text style={styles.loginLink}>লগ ইন করুন</Text>
+                    </TouchableOpacity>
+                  </View>
+                )}
               </View>
             </ScrollView>
-
-            {/* Bottom Logo */}
             <View style={styles.bottomLogoContainer}>
               <Image
-                source={require('../../assets/images/victor-logo.png')}
+                source={require("../../assets/images/victor-logo.png")}
                 style={styles.bottomLogo}
                 resizeMode="contain"
               />
@@ -295,7 +416,6 @@ export default function SignupScreen() {
           </View>
         </SafeAreaView>
       </ImageBackground>
-
       {/* Sex Selection Modal */}
       <Modal
         visible={showSexDropdown}
@@ -328,7 +448,6 @@ export default function SignupScreen() {
           </View>
         </TouchableOpacity>
       </Modal>
-
       {/* Date Selection Modal */}
       <Modal
         visible={showDatePicker}
@@ -339,73 +458,88 @@ export default function SignupScreen() {
         <View style={styles.modalOverlay}>
           <View style={styles.dateModalContent}>
             <Text style={styles.modalTitle}>জন্ম তারিখ নির্বাচন করুন</Text>
-            
             <View style={styles.datePickerContainer}>
               {/* Day Picker */}
               <View style={styles.datePickerColumn}>
                 <Text style={styles.datePickerLabel}>দিন</Text>
-                <ScrollView style={styles.dateScrollView} showsVerticalScrollIndicator={false}>
+                <ScrollView
+                  style={styles.dateScrollView}
+                  showsVerticalScrollIndicator={false}
+                >
                   {days.map((day) => (
                     <TouchableOpacity
                       key={day}
                       style={[
                         styles.dateOption,
-                        selectedDay === day && styles.selectedDateOption
+                        selectedDay === day && styles.selectedDateOption,
                       ]}
                       onPress={() => setSelectedDay(day)}
                     >
-                      <Text style={[
-                        styles.dateOptionText,
-                        selectedDay === day && styles.selectedDateOptionText
-                      ]}>
+                      <Text
+                        style={[
+                          styles.dateOptionText,
+                          selectedDay === day && styles.selectedDateOptionText,
+                        ]}
+                      >
                         {day}
                       </Text>
                     </TouchableOpacity>
                   ))}
                 </ScrollView>
               </View>
-
               {/* Month Picker */}
               <View style={styles.datePickerColumn}>
                 <Text style={styles.datePickerLabel}>মাস</Text>
-                <ScrollView style={styles.dateScrollView} showsVerticalScrollIndicator={false}>
+                <ScrollView
+                  style={styles.dateScrollView}
+                  showsVerticalScrollIndicator={false}
+                >
                   {months.map((month) => (
                     <TouchableOpacity
                       key={month.value}
                       style={[
                         styles.dateOption,
-                        selectedMonth === month.value && styles.selectedDateOption
+                        selectedMonth === month.value &&
+                          styles.selectedDateOption,
                       ]}
                       onPress={() => setSelectedMonth(month.value)}
                     >
-                      <Text style={[
-                        styles.dateOptionText,
-                        selectedMonth === month.value && styles.selectedDateOptionText
-                      ]}>
+                      <Text
+                        style={[
+                          styles.dateOptionText,
+                          selectedMonth === month.value &&
+                            styles.selectedDateOptionText,
+                        ]}
+                      >
                         {month.label}
                       </Text>
                     </TouchableOpacity>
                   ))}
                 </ScrollView>
               </View>
-
               {/* Year Picker */}
               <View style={styles.datePickerColumn}>
                 <Text style={styles.datePickerLabel}>বছর</Text>
-                <ScrollView style={styles.dateScrollView} showsVerticalScrollIndicator={false}>
+                <ScrollView
+                  style={styles.dateScrollView}
+                  showsVerticalScrollIndicator={false}
+                >
                   {years.map((year) => (
                     <TouchableOpacity
                       key={year}
                       style={[
                         styles.dateOption,
-                        selectedYear === year && styles.selectedDateOption
+                        selectedYear === year && styles.selectedDateOption,
                       ]}
                       onPress={() => setSelectedYear(year)}
                     >
-                      <Text style={[
-                        styles.dateOptionText,
-                        selectedYear === year && styles.selectedDateOptionText
-                      ]}>
+                      <Text
+                        style={[
+                          styles.dateOptionText,
+                          selectedYear === year &&
+                            styles.selectedDateOptionText,
+                        ]}
+                      >
                         {year}
                       </Text>
                     </TouchableOpacity>
@@ -413,10 +547,13 @@ export default function SignupScreen() {
                 </ScrollView>
               </View>
             </View>
-
             <View style={styles.dateModalButtons}>
               <TouchableOpacity
-                style={[styles.dateConfirmButton, (!selectedDay || !selectedMonth || !selectedYear) && styles.disabledButton]}
+                style={[
+                  styles.dateConfirmButton,
+                  (!selectedDay || !selectedMonth || !selectedYear) &&
+                    styles.disabledButton,
+                ]}
                 onPress={handleDateSelect}
                 disabled={!selectedDay || !selectedMonth || !selectedYear}
               >
@@ -442,8 +579,8 @@ const styles = StyleSheet.create({
   },
   backgroundImage: {
     flex: 1,
-    width: '100%',
-    height: '100%',
+    width: "100%",
+    height: "100%",
   },
   safeArea: {
     flex: 1,
@@ -456,21 +593,21 @@ const styles = StyleSheet.create({
   backButton: {
     paddingHorizontal: 0,
     paddingVertical: 0,
-    backgroundColor: 'transparent',
+    backgroundColor: "transparent",
     borderWidth: 0,
     elevation: 0,
     shadowOpacity: 0,
   },
   arrowIcon: {
     fontSize: 48,
-    color: '#000',
-    fontWeight: 'bold',
-    textAlign: 'left',
+    color: "#000",
+    fontWeight: "bold",
+    textAlign: "left",
     lineHeight: 52,
   },
   logoContainer: {
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
   topLogo: {
     width: 100,
@@ -478,25 +615,25 @@ const styles = StyleSheet.create({
   },
   bottomSection: {
     flex: 0.75,
-    justifyContent: 'flex-start',
+    justifyContent: "flex-start",
     paddingHorizontal: 30,
     paddingBottom: 0,
   },
   signupTitle: {
     fontSize: 32,
-    color: '#000',
-    textAlign: 'left',
-    alignSelf: 'flex-start',
-    fontFamily: 'HindSiliguri-Bold',
+    color: "#000",
+    textAlign: "left",
+    alignSelf: "flex-start",
+    fontFamily: "HindSiliguri-Bold",
     marginBottom: 5,
   },
   subtitle: {
     fontSize: 16,
-    color: '#333',
-    textAlign: 'left',
-    alignSelf: 'flex-start',
+    color: "#333",
+    textAlign: "left",
+    alignSelf: "flex-start",
     marginBottom: 20,
-    fontFamily: 'HindSiliguri-Medium',
+    fontFamily: "HindSiliguri-Medium",
   },
   scrollContainer: {
     flex: 1,
@@ -512,34 +649,34 @@ const styles = StyleSheet.create({
   },
   inputLabel: {
     fontSize: 16,
-    color: '#000',
+    color: "#000",
     marginBottom: 5,
-    fontFamily: 'HindSiliguri-Bold',
+    fontFamily: "HindSiliguri-Bold",
   },
   textInput: {
-    backgroundColor: 'rgba(255, 255, 255, 0.8)',
+    backgroundColor: "rgba(255, 255, 255, 0.8)",
     borderWidth: 1,
-    borderColor: '#000',
-    borderRadius: 25,
+    borderColor: "#000",
+    borderRadius: 50,
     paddingVertical: 15,
     paddingHorizontal: 22,
     fontSize: 16,
-    fontFamily: 'HindSiliguri-Medium',
+    fontFamily: "HindSiliguri-Medium",
   },
   passwordContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: 'rgba(255, 255, 255, 0.8)',
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "rgba(255, 255, 255, 0.8)",
     borderWidth: 1,
-    borderColor: '#000',
-    borderRadius: 25,
+    borderColor: "#000",
+    borderRadius: 50,
   },
   passwordInput: {
     flex: 1,
     paddingVertical: 15,
     paddingHorizontal: 22,
     fontSize: 16,
-    fontFamily: 'HindSiliguri-Medium',
+    fontFamily: "HindSiliguri-Medium",
   },
   eyeIcon: {
     paddingHorizontal: 15,
@@ -549,24 +686,46 @@ const styles = StyleSheet.create({
     fontSize: 20,
   },
   dropdownButton: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    backgroundColor: 'rgba(255, 255, 255, 0.8)',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    backgroundColor: "rgba(255, 255, 255, 0.8)",
     borderWidth: 1,
-    borderColor: '#000',
-    borderRadius: 25,
+    borderColor: "#000",
+    borderRadius: 50,
     paddingVertical: 15,
     paddingHorizontal: 22,
   },
   dropdownText: {
     fontSize: 16,
-    color: '#333',
-    fontFamily: 'HindSiliguri-Medium',
+    color: "#333",
+    fontFamily: "HindSiliguri-Medium",
   },
   dropdownArrow: {
     fontSize: 16,
-    color: '#333',
+    color: "#333",
+  },
+  dobRow: {
+    flexDirection: "row",
+    gap: 10,
+    marginTop: 2,
+    marginBottom: 8,
+  },
+  dobBox: {
+    flex: 1,
+    backgroundColor: "rgba(255,255,255,0.8)",
+    borderWidth: 1,
+    borderColor: "#000",
+    borderRadius: 50,
+    paddingVertical: 15,
+    paddingHorizontal: 22,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  dobBoxText: {
+    fontSize: 16,
+    color: "#333",
+    fontFamily: "HindSiliguri-Medium",
   },
   imageUploadSection: {
     marginTop: 10,
@@ -574,22 +733,22 @@ const styles = StyleSheet.create({
   },
   imageUploadLabel: {
     fontSize: 16,
-    fontFamily: 'HindSiliguri-Bold',
-    color: '#000',
+    fontFamily: "HindSiliguri-Bold",
+    color: "#000",
     marginBottom: 8,
   },
   imageUploadButton: {
-    backgroundColor: 'rgba(255, 255, 255, 0.8)',
+    backgroundColor: "rgba(255, 255, 255, 0.8)",
     borderRadius: 25,
     borderWidth: 2,
-    borderColor: '#000',
-    borderStyle: 'dashed',
+    borderColor: "#000",
+    borderStyle: "dashed",
     paddingVertical: 25,
     paddingHorizontal: 20,
-    alignItems: 'center',
+    alignItems: "center",
   },
   imageUploadPlaceholder: {
-    alignItems: 'center',
+    alignItems: "center",
   },
   imageUploadIcon: {
     fontSize: 32,
@@ -597,53 +756,52 @@ const styles = StyleSheet.create({
   },
   imageUploadText: {
     fontSize: 16,
-    color: '#333',
-    fontFamily: 'HindSiliguri-Medium',
+    color: "#333",
+    fontFamily: "HindSiliguri-Medium",
   },
   signupButton: {
-    backgroundColor: '#eb01f6',
-    borderRadius: 25,
+    backgroundColor: "#eb01f6",
+    borderRadius: 50,
     paddingVertical: 15,
     paddingHorizontal: 40,
-    width: '100%',
-    alignItems: 'center',
+    marginTop: 10,
+    alignItems: "center",
     elevation: 3,
-    shadowColor: '#000',
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.2,
     shadowRadius: 4,
     borderWidth: 1,
-    borderColor: '#000',
+    borderColor: "#000",
   },
 
   signupButtonText: {
-    color: '#fff',
+    color: "#fff",
     fontSize: 18,
-    fontFamily: 'HindSiliguri-Bold',
+    fontFamily: "HindSiliguri-Bold",
   },
 
   loginContainer: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
     marginTop: 15,
-    flexWrap: 'wrap',
+    flexWrap: "wrap",
   },
 
   loginText: {
-    color: '#333',
+    color: "#333",
     fontSize: 16,
-    fontFamily: 'HindSiliguri-Medium',
+    fontFamily: "HindSiliguri-Medium",
   },
 
   loginLink: {
-    color: '#eb01f6',
+    color: "#eb01f6",
     fontSize: 16,
-    fontFamily: 'HindSiliguri-Bold',
-    textDecorationLine: 'underline',
+    fontFamily: "HindSiliguri-Bold",
   },
   bottomLogoContainer: {
-    alignItems: 'center',
+    alignItems: "center",
     marginTop: 15,
     paddingBottom: 10,
   },
@@ -654,12 +812,12 @@ const styles = StyleSheet.create({
   // Modal Styles
   modalOverlay: {
     flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    justifyContent: 'center',
-    alignItems: 'center',
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    justifyContent: "center",
+    alignItems: "center",
   },
   modalContent: {
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
     borderRadius: 20,
     padding: 20,
     width: width * 0.8,
@@ -667,45 +825,45 @@ const styles = StyleSheet.create({
   },
   modalTitle: {
     fontSize: 20,
-    fontFamily: 'HindSiliguri-Bold',
-    color: '#000',
-    textAlign: 'center',
+    fontFamily: "HindSiliguri-Bold",
+    color: "#000",
+    textAlign: "center",
     marginBottom: 20,
   },
   modalOption: {
     paddingVertical: 15,
     paddingHorizontal: 20,
     borderBottomWidth: 1,
-    borderBottomColor: '#eee',
+    borderBottomColor: "#eee",
   },
   modalOptionText: {
     fontSize: 18,
-    fontFamily: 'HindSiliguri-Medium',
-    color: '#333',
-    textAlign: 'center',
+    fontFamily: "HindSiliguri-Medium",
+    color: "#333",
+    textAlign: "center",
   },
   modalCloseButton: {
     marginTop: 20,
     paddingVertical: 12,
-    backgroundColor: '#eb01f6',
+    backgroundColor: "#eb01f6",
     borderRadius: 25,
-    alignItems: 'center',
+    alignItems: "center",
   },
   modalCloseText: {
-    color: '#fff',
+    color: "#fff",
     fontSize: 16,
-    fontFamily: 'HindSiliguri-Bold',
+    fontFamily: "HindSiliguri-Bold",
   },
   dateNote: {
     fontSize: 14,
-    color: '#666',
-    textAlign: 'center',
+    color: "#666",
+    textAlign: "center",
     marginBottom: 15,
-    fontFamily: 'HindSiliguri-Medium',
+    fontFamily: "HindSiliguri-Medium",
   },
   dateInputContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    justifyContent: "space-between",
     marginBottom: 20,
   },
   dateInput: {
@@ -713,25 +871,25 @@ const styles = StyleSheet.create({
     marginHorizontal: 5,
     paddingVertical: 10,
     paddingHorizontal: 15,
-    backgroundColor: '#f5f5f5',
+    backgroundColor: "#f5f5f5",
     borderRadius: 10,
     borderWidth: 1,
-    borderColor: '#ddd',
-    textAlign: 'center',
+    borderColor: "#ddd",
+    textAlign: "center",
     fontSize: 16,
-    fontFamily: 'HindSiliguri-Medium',
+    fontFamily: "HindSiliguri-Medium",
   },
   dateConfirmButton: {
     flex: 1,
-    backgroundColor: '#eb01f6',
+    backgroundColor: "#eb01f6",
     paddingVertical: 15,
     paddingHorizontal: 20,
     borderRadius: 25,
-    alignItems: 'center',
+    alignItems: "center",
     borderWidth: 2,
-    borderColor: '#000',
+    borderColor: "#000",
     marginRight: 10,
-    shadowColor: '#000',
+    shadowColor: "#000",
     shadowOffset: {
       width: 0,
       height: 2,
@@ -741,21 +899,21 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
   dateConfirmText: {
-    color: '#fff',
+    color: "#fff",
     fontSize: 16,
-    fontFamily: 'HindSiliguri-Bold',
+    fontFamily: "HindSiliguri-Bold",
   },
   // New Date Picker Styles
   dateModalContent: {
-    backgroundColor: 'white',
-    borderRadius: 15,
+    backgroundColor: "white",
+    borderRadius: 50,
     padding: 25,
-    width: '90%',
-    maxHeight: '80%',
+    width: "90%",
+    maxHeight: "80%",
   },
   datePickerContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    justifyContent: "space-between",
     marginVertical: 20,
     height: 200,
   },
@@ -765,62 +923,109 @@ const styles = StyleSheet.create({
   },
   datePickerLabel: {
     fontSize: 16,
-    fontFamily: 'HindSiliguri-Bold',
-    color: '#333',
-    textAlign: 'center',
+    fontFamily: "HindSiliguri-Bold",
+    color: "#333",
+    textAlign: "center",
     marginBottom: 10,
   },
   dateScrollView: {
     maxHeight: 160,
     borderWidth: 1,
-    borderColor: '#ddd',
+    borderColor: "#ddd",
     borderRadius: 8,
-    backgroundColor: '#f9f9f9',
+    backgroundColor: "#f9f9f9",
   },
   dateOption: {
     paddingVertical: 12,
     paddingHorizontal: 8,
-    alignItems: 'center',
+    alignItems: "center",
     borderBottomWidth: 0.5,
-    borderBottomColor: '#eee',
+    borderBottomColor: "#eee",
   },
   selectedDateOption: {
-    backgroundColor: '#eb01f6',
+    backgroundColor: "#eb01f6",
   },
   dateOptionText: {
     fontSize: 14,
-    fontFamily: 'HindSiliguri-Medium',
-    color: '#333',
+    fontFamily: "HindSiliguri-Medium",
+    color: "#333",
   },
   selectedDateOptionText: {
-    color: 'white',
-    fontWeight: 'bold',
+    color: "white",
+    fontWeight: "bold",
   },
   dateModalButtons: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    justifyContent: "space-between",
     marginTop: 20,
     paddingHorizontal: 10,
   },
   dateCancelButton: {
     flex: 1,
-    backgroundColor: 'rgba(255, 255, 255, 0.8)',
+    backgroundColor: "rgba(255, 255, 255, 0.8)",
     paddingVertical: 15,
     paddingHorizontal: 20,
     borderRadius: 25,
     borderWidth: 2,
-    borderColor: '#000',
+    borderColor: "#000",
     marginLeft: 10,
-    alignItems: 'center',
+    alignItems: "center",
   },
   dateCancelText: {
     fontSize: 16,
-    fontFamily: 'HindSiliguri-Bold',
-    color: '#000',
+    fontFamily: "HindSiliguri-Bold",
+    color: "#000",
   },
   disabledButton: {
-    backgroundColor: '#ccc',
+    backgroundColor: "#ccc",
     opacity: 0.6,
-    borderColor: '#999',
+    borderColor: "#999",
+  },
+  referralRow: {
+    flexDirection: "row",
+    alignItems: "flex-end",
+    marginBottom: 10,
+    gap: 10,
+  },
+  referralInput: {
+    backgroundColor: "rgba(255, 255, 255, 0.8)",
+    borderWidth: 1,
+    borderColor: "#000",
+    borderRadius: 50,
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    fontSize: 15,
+    fontFamily: "HindSiliguri-Medium",
+    height: 60,
+  },
+  nextButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#eb01f6",
+    borderRadius: 50,
+    paddingVertical: 12,
+    paddingHorizontal: 22,
+    height: 60,
+    marginLeft: 4,
+    alignSelf: "flex-end",
+    borderWidth: 1,
+    borderColor: "#000",
+    elevation: 2,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.15,
+    shadowRadius: 2,
+  },
+  nextButtonText: {
+    color: "#fff",
+    fontSize: 16,
+    fontFamily: "HindSiliguri-Bold",
+    marginRight: 6,
+  },
+  nextButtonIcon: {
+    color: "#fff",
+    fontSize: 18,
+    fontWeight: "bold",
+    marginTop: 1,
   },
 });

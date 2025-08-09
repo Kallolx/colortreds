@@ -1,7 +1,7 @@
 import { Ionicons } from "@expo/vector-icons";
 import * as Clipboard from "expo-clipboard";
-import { useState } from "react";
 import { Image } from "expo-image";
+import { useState } from "react";
 import {
   Alert,
   Dimensions,
@@ -129,14 +129,34 @@ export default function DepositModal({
             showsVerticalScrollIndicator={false}
           >
             <View style={styles.inputGroup}>
-              <TextInput
-                style={styles.textInput}
-                value={amount}
-                onChangeText={setAmount}
-                placeholder="সর্বনিম্ন ৫০ থেকে সর্বোচ্চ ৫,০০০ টাকা"
-                keyboardType="numeric"
-                placeholderTextColor="#999"
-              />
+              <View style={{ position: 'relative', justifyContent: 'center' }}>
+                <TextInput
+                  style={[styles.textInput, { paddingRight: 54 }]}
+                  value={amount}
+                  onChangeText={setAmount}
+                  placeholder="সর্বনিম্ন ৫০ থেকে সর্বোচ্চ ৫,০০০"
+                  keyboardType="numeric"
+                  placeholderTextColor="#999"
+                />
+                <Text
+                  style={{
+                    position: 'absolute',
+                    right: 24,
+                    top: 0,
+                    bottom: 0,
+                    textAlignVertical: 'center',
+                    fontSize: 18,
+                    color: '#000',
+                    fontFamily: 'HindSiliguri-Medium',
+                    height: '100%',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                  }}
+                >
+                  টাকা
+                </Text>
+              </View>
             </View>
 
             <View style={styles.inputGroup}>
@@ -253,7 +273,7 @@ const styles = StyleSheet.create({
   accountName: {
     fontSize: 20,
     fontFamily: "HindSiliguri-SemiBold",
-    color: "#007AFF",
+    color: "#000",
   },
   merchantSection: {
     marginTop: 20,
@@ -305,7 +325,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#F5F5F5",
     paddingVertical: 12,
-    borderRadius: 24,
+    borderRadius: 50,
     marginRight: 8,
     borderWidth: 1,
     borderColor: "#000",
@@ -320,7 +340,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#eb01f6",
     paddingVertical: 12,
-    borderRadius: 24,
+    borderRadius: 50,
     marginLeft: 8,
     alignItems: "center",
   },

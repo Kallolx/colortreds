@@ -105,7 +105,6 @@ export default function BottomNavigation({
         style={[
           styles.navItem,
           isMiddle && styles.middleNavItem,
-          isActive && !isMiddle && styles.activeNavItem,
           isActive && isMiddle && styles.activeMiddleNavItem,
         ]}
         onPress={() => handleTabPress(tab)}
@@ -172,16 +171,12 @@ const styles = StyleSheet.create({
   bottomNav: {
     backgroundColor: "#ff8c00", // Orange background
     flexDirection: "row",
-    paddingVertical: 8,
+    paddingVertical: 6,
     paddingHorizontal: 20,
-    paddingBottom: 10,
+    paddingBottom: 0,
     borderTopLeftRadius: 24,
     borderTopRightRadius: 24,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: -4 },
-    shadowOpacity: 0.15,
-    shadowRadius: 8,
-    elevation: 10,
+
     position: "relative",
   },
   curveContainer: {

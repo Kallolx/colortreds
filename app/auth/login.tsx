@@ -1,3 +1,4 @@
+import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import React, { useEffect, useRef } from 'react';
 import {
@@ -90,7 +91,7 @@ export default function LoginScreen() {
             
             {/* Subtitle */}
             <Text style={styles.subtitle}>
-              আপনার সুবর্ণ একটি আকাউন্ট লগ ইন করুন
+              আপনার পূর্বের একটি একাউন্ট লগ ইন করুন
             </Text>
 
             {/* Login Form */}
@@ -122,10 +123,13 @@ export default function LoginScreen() {
                 </TouchableOpacity>
               </View>
               
-              {/* Login Button */}
-              <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
-                <Text style={styles.loginButtonText}>লগ ইন</Text>
-              </TouchableOpacity>
+              {/* Login Button aligned right with arrow */}
+              <View style={{ alignItems: 'flex-end', width: '100%' }}>
+                <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
+                  <Text style={styles.loginButtonText}>লগ ইন</Text>
+                  <Ionicons name="arrow-forward" size={22} color="#fff" style={styles.loginButtonIcon} />
+                </TouchableOpacity>
+              </View>
               
               {/* Signup Link */}
               <View style={styles.signupContainer}>
@@ -229,7 +233,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(255, 255, 255, 0.8)',
     borderWidth: 1,
     borderColor: '#000',
-    borderRadius: 25,
+    borderRadius: 50,
     paddingVertical: 15,
     paddingHorizontal: 22,
     fontSize: 16,
@@ -243,15 +247,17 @@ const styles = StyleSheet.create({
     color: '#eb01f6',
     fontSize: 14,
     fontFamily: 'HindSiliguri-Bold',
-    textDecorationLine: 'underline',
   },
   loginButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
     backgroundColor: '#eb01f6',
-    borderRadius: 25,
+    borderRadius: 50,
     paddingVertical: 15,
     paddingHorizontal: 40,
-    width: '100%',
-    alignItems: 'center',
+    minWidth: 160,
+    alignSelf: 'flex-end',
     elevation: 3,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
@@ -259,6 +265,10 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     borderWidth: 1,
     borderColor: '#000',
+  },
+  loginButtonIcon: {
+    marginLeft: 8,
+    marginTop: 1,
   },
   loginButtonText: {
     color: '#FFFFFF',
@@ -281,7 +291,6 @@ const styles = StyleSheet.create({
     color: '#eb01f6',
     fontSize: 16,
     fontFamily: 'HindSiliguri-Bold',
-    textDecorationLine: 'underline',
   },
   bottomLogoContainer: {
     alignItems: 'center',
@@ -291,5 +300,12 @@ const styles = StyleSheet.create({
   bottomLogo: {
     width: width * 0.4,
     height: 35,
+  },
+    validationMsg: {
+    color: '#e53935',
+    fontSize: 14,
+    fontFamily: 'HindSiliguri-Bold',
+    marginTop: 6,
+    marginLeft: 4,
   },
 });

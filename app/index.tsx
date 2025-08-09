@@ -148,9 +148,9 @@ export default function OnboardingScreen() {
             <Text style={styles.description}>
               <Text style={{ fontFamily: 'HindSiliguri-Bold' }}>কালার ট্রেড: </Text>
               <Text style={{ fontFamily: 'HindSiliguri-Medium' }}>
-                রঙের সাথে অর্থউপার্জনের{'\n'}
-                দারুণ সুযোগ, সান্ধ্যকের নতুন দিগন্ত উন্মোচন{'\n'}
-                করুন। আজই থেকে আপনার অর্থনৈতিক মুক্তির{'\n'}
+                রঙের সাথে অর্থ উপার্জনের{'\n'}
+                দারুন সুযোগ, সাফল্যের নতুন দিগন্ত উন্মোচন{'\n'}
+                করুন । আজ থেকেই আপনার অর্থনৈতিক মুক্তির{'\n'}
                 যাত্রা শুরু করুন!
               </Text>
             </Text>
@@ -187,10 +187,12 @@ export default function OnboardingScreen() {
       >
         <View style={styles.modalOverlay}>
           <View style={styles.modalContent}>
+            <Image
+                source={require('../assets/images/icons/no-internet.png')} // You'll need to add this image
+                style={{ height: 100, width: 100 }}
+                resizeMode="contain"
+              />
             <Text style={styles.modalTitle}>No Internet Connection</Text>
-            <Text style={styles.modalMessage}>
-              Please check your internet connection and try again.
-            </Text>
             <TouchableOpacity style={styles.modalButton} onPress={handleCloseModal}>
               <Text style={styles.modalButtonText}>Close</Text>
             </TouchableOpacity>
@@ -252,7 +254,7 @@ const styles = StyleSheet.create({
   },
   loginButton: {
     backgroundColor: '#eb01f6',
-    borderRadius: 25,
+    borderRadius: 50,
     paddingVertical: 15,
     paddingHorizontal: 40,
     width: '100%',
@@ -272,7 +274,7 @@ const styles = StyleSheet.create({
   },
   signupButton: {
     backgroundColor: 'orange',
-    borderRadius: 25,
+    borderRadius: 50,
     paddingVertical: 13,
     paddingHorizontal: 40,
     width: '100%',

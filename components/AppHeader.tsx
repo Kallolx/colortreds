@@ -86,11 +86,9 @@ export default function AppHeader({ userBalance, activeTab }: AppHeaderProps) {
 
 const styles = StyleSheet.create({
   header: {
-    backgroundColor: '#FFD700',
+    backgroundColor: '#FFFF00',
     paddingHorizontal: 10,
-    paddingBottom: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: '#f0f0f0',
+    paddingBottom: 10,
     borderBottomLeftRadius: 24,
     borderBottomRightRadius: 24,
   },

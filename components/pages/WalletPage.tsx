@@ -99,9 +99,9 @@ export default function WalletPage() {
                 source={require("../../assets/images/app-logo.png")}
                 style={{ width: 200, height: 40, resizeMode: "contain" }}
               />
-              <View style={styles.chip}>
-                <View style={styles.chipInner} />
-              </View>
+            </View>
+            <View style={styles.chip}>
+              <View style={styles.chipInner} />
             </View>
 
             {/* Balance with label above */}
@@ -114,7 +114,7 @@ export default function WalletPage() {
               <Text
                 style={[
                   styles.cardValue,
-                  { color: "#fff", marginBottom: 0, paddingBottom: 0 },
+                  { color: "#000", marginBottom: 0, paddingBottom: 0 },
                 ]}
               >
                 অ্যাকাউন্ট ব্যালেন্স (টাকা)
@@ -154,7 +154,6 @@ export default function WalletPage() {
                       resizeMode="contain"
                     />
                   )}
-                  <Text style={styles.paymentName}>{method.name}</Text>
                 </TouchableOpacity>
                 {idx < paymentMethods.length - 1 && (
                   <View style={styles.verticalDivider} />
@@ -196,7 +195,6 @@ export default function WalletPage() {
                       resizeMode="contain"
                     />
                   )}
-                  <Text style={styles.paymentName}>{method.name}</Text>
                 </TouchableOpacity>
                 {idx < paymentMethods.length - 1 && (
                   <View style={styles.verticalDivider} />
@@ -326,13 +324,13 @@ const styles = StyleSheet.create({
     marginLeft: 20,
     marginRight: 20,
     marginTop: 8,
-    marginBottom: 20,
+    marginBottom: 0,
   },
   atmCard: {
     height: 220,
     borderRadius: 20,
     padding: 15,
-    backgroundColor: "#667eea",
+    backgroundColor: "#FF00FF",
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 8 },
     shadowOpacity: 0.3,
@@ -346,16 +344,19 @@ const styles = StyleSheet.create({
   },
 
   chip: {
-    width: 45,
-    height: 35,
-    backgroundColor: "#FFD700",
+    width: 55,
+    height: 45,
+    backgroundColor: "#FF2C2C",
     borderRadius: 8,
     justifyContent: "center",
     alignItems: "center",
+    alignSelf: "flex-end",
+    marginTop: 10,
   },
+
   chipInner: {
-    width: 35,
-    height: 25,
+    width: 45,
+    height: 35,
     backgroundColor: "#FFA500",
     borderRadius: 4,
   },
@@ -422,6 +423,9 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderColor: "#e9ecef",
   },
+
+  //Deposit Section Styles
+
   depositSection: {
     margin: 0,
     marginTop: 0,
@@ -433,7 +437,6 @@ const styles = StyleSheet.create({
     color: "#333",
     marginLeft: 10,
     marginTop: 10,
-    marginBottom: 10,
   },
   paymentBox: {
     flexDirection: "row",
@@ -451,15 +454,13 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
-    paddingVertical: 18,
+    paddingVertical: 10,
     paddingHorizontal: 0,
     backgroundColor: "transparent",
   },
 
   // Withdraw Section Styles
   withdrawSection: {
-    margin: 0,
-    marginTop: 0,
     padding: 10,
   },
   withdrawTitle: {
@@ -467,9 +468,9 @@ const styles = StyleSheet.create({
     fontFamily: "HindSiliguri-Bold",
     color: "#333",
     marginLeft: 10,
-    marginTop: 0,
     marginBottom: 0,
   },
+
   withdrawPaymentBox: {
     flexDirection: "row",
     borderWidth: 1,
@@ -480,24 +481,18 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-between",
     marginHorizontal: 10,
-    marginBottom: 10,
   },
   historyButton: {
     color: "#007AFF",
     fontFamily: "HindSiliguri-Bold",
     fontSize: 16,
-    marginTop: 10,
-    marginBottom: 10,
     marginRight: 20,
-    textAlignVertical: "center",
-    textDecorationLine: "underline",
   },
   withdrawMethodBox: {
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
-    paddingVertical: 18,
-    paddingHorizontal: 0,
+    paddingVertical: 10,
     backgroundColor: "transparent",
   },
   verticalDivider: {
@@ -507,12 +502,10 @@ const styles = StyleSheet.create({
   },
   paymentIcon: {
     fontSize: 32,
-    marginBottom: 10,
   },
   paymentImage: {
-    width: 58,
-    height: 42,
-    marginBottom: 10,
+    width: 68,
+    height: 52,
   },
   paymentName: {
     fontSize: 16,
@@ -663,13 +656,13 @@ const styles = StyleSheet.create({
     color: "#fff",
   },
   adsCard: {
-    backgroundColor: "#fff",
+    backgroundColor: "#d7d8d8",
     margin: 15,
     marginBottom: 20,
     marginTop: 0,
     padding: 0,
     borderRadius: 12,
-    height: 60,
+    height: 70,
     justifyContent: "center",
     alignItems: "center",
   },
@@ -775,7 +768,7 @@ const styles = StyleSheet.create({
     width: 120,
     height: 36,
   },
-    modalFooter: {
+  modalFooter: {
     alignItems: "center",
     borderTopColor: "#f0f0f0",
     paddingTop: 8,
