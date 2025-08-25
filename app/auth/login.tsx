@@ -1,10 +1,8 @@
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
-import React, { useEffect, useRef } from 'react';
+import React from 'react';
 import {
-  Animated,
   Dimensions,
-  Easing,
   Image,
   ImageBackground,
   SafeAreaView,
@@ -12,7 +10,7 @@ import {
   Text,
   TextInput,
   TouchableOpacity,
-  View
+  View,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -21,27 +19,7 @@ const { width, height } = Dimensions.get('window');
 export default function LoginScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
-  const rotationValue = useRef(new Animated.Value(0)).current;
-
-  useEffect(() => {
-    const startRotation = () => {
-      Animated.loop(
-        Animated.timing(rotationValue, {
-          toValue: 1,
-          duration: 4000, // 4 seconds for smooth rotation
-          useNativeDriver: true,
-          easing: Easing.linear, // Linear easing for constant speed
-        })
-      ).start();
-    };
-
-    startRotation();
-  }, [rotationValue]);
-
-  const rotate = rotationValue.interpolate({
-    inputRange: [0, 1],
-    outputRange: ['0deg', '360deg'],
-  });
+  // Rotation animation removed — logo will be static
 
   const handleLogin = () => {
     // TODO: Implement login logic
@@ -74,11 +52,11 @@ export default function LoginScreen() {
               </Text> 
             </TouchableOpacity>
             
-            {/* Logo centered with rotation */}
+            {/* Logo centered (static) */}
             <View style={styles.logoContainer}>
-              <Animated.Image
+              <Image
                 source={require('../../assets/images/logo.png')}
-                style={[styles.topLogo, { transform: [{ rotate }] }]}
+                style={styles.topLogo}
                 resizeMode="contain"
               />
             </View>
@@ -98,7 +76,7 @@ export default function LoginScreen() {
             <View style={styles.form}>
               {/* Email Input */}
               <View style={styles.inputGroup}>
-                <Text style={styles.inputLabel}>নম্বর বা ইমেইল</Text>
+                <Text style={styles.inputLabel}>নাম্বার বা ইমেইল</Text>
                 <TextInput
                   style={styles.textInput}
                   placeholder="মোবাইল নম্বর বা ইমেইল ঠিকানা লিখুন"
@@ -113,7 +91,7 @@ export default function LoginScreen() {
                 <Text style={styles.inputLabel}>পাসওয়ার্ড</Text>
                 <TextInput
                   style={styles.textInput}
-                  placeholder="৮ সংখ্যার পাসওয়ার্ড লিখুন"
+                  placeholder="৮ থেকে ১৬ সংখ্যার পাসওয়ার্ড লিখুন"
                   placeholderTextColor="#666"
                   secureTextEntry
                   autoCapitalize="none"
@@ -193,8 +171,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   topLogo: {
-    width: 120,
-    height: 120,
+    width: 90,
+    height: 90,
   },
   bottomSection: {
     flex: 0.6,
@@ -237,7 +215,6 @@ const styles = StyleSheet.create({
     paddingVertical: 15,
     paddingHorizontal: 22,
     fontSize: 16,
-    fontFamily: 'HindSiliguri-Medium',
   },
   forgotPassword: {
     alignSelf: 'flex-end',

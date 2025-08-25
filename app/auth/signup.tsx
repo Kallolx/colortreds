@@ -1,10 +1,9 @@
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useRef, useState } from "react";
 import {
   Animated,
   Dimensions,
-  Easing,
   Image,
   ImageBackground,
   Modal,
@@ -14,7 +13,7 @@ import {
   Text,
   TextInput,
   TouchableOpacity,
-  View,
+  View
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
@@ -55,20 +54,6 @@ export default function SignupScreen() {
     : fullName.split(" ")[0] || "Md Rockey";
 
   const sexOptions = ["পুরুষ", "মহিলা", "অন্যান্য"];
-
-  useEffect(() => {
-    const startRotation = () => {
-      Animated.loop(
-        Animated.timing(rotationValue, {
-          toValue: 1,
-          duration: 4000,
-          useNativeDriver: true,
-          easing: Easing.linear,
-        })
-      ).start();
-    };
-    startRotation();
-  }, [rotationValue]);
 
   const rotate = rotationValue.interpolate({
     inputRange: [0, 1],
@@ -166,16 +151,24 @@ export default function SignupScreen() {
             <View style={styles.logoContainer}>
               <Animated.Image
                 source={require("../../assets/images/logo.png")}
-                style={[styles.topLogo, { transform: [{ rotate }] }]}
+                style={[styles.topLogo]}
                 resizeMode="contain"
               />
             </View>
           </View>
           <View style={styles.bottomSection}>
-            <Text style={styles.signupTitle}>সাইন আপ</Text>
-            <Text style={styles.subtitle}>
-              সাইন আপ করতে ফর্মটি পূরণ করুন
-            </Text>
+            {/* Show signup header for steps 1-2, show profile header on step 3 */}
+            {step !== 3 ? (
+              <>
+                <Text style={styles.signupTitle}>সাইন আপ</Text>
+                <Text style={styles.subtitle}>সাইন আপ করতে ফর্ম পূরণ করুন</Text>
+              </>
+            ) : (
+              <>
+                <Text style={styles.signupTitle}>প্রোফাইল ছবি</Text>
+                <Text style={styles.subtitle}>একটি প্রোফাইল ছবি আপলোড করুন</Text>
+              </>
+            )}
             <ScrollView
               style={styles.scrollContainer}
               contentContainerStyle={styles.scrollContent}
@@ -189,7 +182,7 @@ export default function SignupScreen() {
                       <Text style={styles.inputLabel}>পুরো নাম</Text>
                       <TextInput
                         style={styles.textInput}
-                        placeholder="আপনার পুরো নাম লিখুন"
+                        placeholder="পুরো নাম লিখুন"
                         placeholderTextColor="#666"
                         autoCapitalize="words"
                         value={fullName}
@@ -211,7 +204,7 @@ export default function SignupScreen() {
                     </View>
                     {/* Date of Birth as 3 boxes */}
                     <View style={styles.inputGroup}>
-                      <Text style={styles.inputLabel}>জন্ম তারিখ</Text>
+                      <Text style={styles.inputLabel}>জন্মদিন</Text>
                       <View style={styles.dobRow}>
                         <TouchableOpacity
                           style={styles.dobBox}
@@ -243,7 +236,7 @@ export default function SignupScreen() {
                     <View style={styles.referralRow}>
                       <View style={{ flex: 1 }}>
                         <Text style={styles.inputLabel}>
-                          রেফারেল কোড (ঐচ্ছিক)
+                          রেফার কোড (যদি থাকে)
                         </Text>
                         <TextInput
                           style={styles.referralInput}
@@ -272,7 +265,7 @@ export default function SignupScreen() {
                   <>
                     {/* Email */}
                     <View style={styles.inputGroup}>
-                      <Text style={styles.inputLabel}>ইমেইল ঠিকানা</Text>
+                      <Text style={styles.inputLabel}>ইমেইল</Text>
                       <TextInput
                         style={styles.textInput}
                         placeholder="ইমেইল ঠিকানা লিখুন"
@@ -285,10 +278,10 @@ export default function SignupScreen() {
                     </View>
                     {/* Mobile */}
                     <View style={styles.inputGroup}>
-                      <Text style={styles.inputLabel}>মোবাইল নম্বর</Text>
+                      <Text style={styles.inputLabel}>মোবাইল নাম্বার</Text>
                       <TextInput
                         style={styles.textInput}
-                        placeholder="মোবাইল নম্বর লিখুন"
+                        placeholder="মোবাইল নাম্বার লিখুন"
                         placeholderTextColor="#666"
                         keyboardType="phone-pad"
                         value={mobile}
@@ -301,7 +294,7 @@ export default function SignupScreen() {
                       <View style={styles.passwordContainer}>
                         <TextInput
                           style={styles.passwordInput}
-                          placeholder="৮ সংখ্যার পাসওয়ার্ড লিখুন"
+                          placeholder="পাসওয়ার্ড লিখুন"
                           placeholderTextColor="#666"
                           secureTextEntry={!showPassword}
                           autoCapitalize="none"
@@ -327,7 +320,7 @@ export default function SignupScreen() {
                       <View style={styles.passwordContainer}>
                         <TextInput
                           style={styles.passwordInput}
-                          placeholder="৮ সংখ্যার পাসওয়ার্ড লিখুন"
+                          placeholder="পুনরায় পাসওয়ার্ড লিখুন"
                           placeholderTextColor="#666"
                           secureTextEntry={!showPassword}
                           autoCapitalize="none"
@@ -357,20 +350,61 @@ export default function SignupScreen() {
                 )}
                 {step === 3 && (
                   <>
-                    {/* Profile Image Upload */}
-                    <View style={styles.imageUploadSection}>
-                      <Text style={styles.imageUploadLabel}>প্রোফাইল ছবি</Text>
-                      <TouchableOpacity
-                        style={styles.imageUploadButton}
-                        onPress={handleImageUpload}
+                    {/* Large circular profile image with camera overlay */}
+                    <View style={{ alignItems: "center", marginBottom: 24 }}>
+                      {/* outer wrapper lets camera sit outside the circular image */}
+                      <View
+                        style={{
+                          width: 180,
+                          height: 180,
+                          position: "relative",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          overflow: "visible",
+                        }}
                       >
-                        <View style={styles.imageUploadPlaceholder}>
-                          <Text style={styles.imageUploadIcon}>📷</Text>
-                          <Text style={styles.imageUploadText}>
-                            ছবি আপলোড করুন
-                          </Text>
+                        {/* inner circular image (clips its content) */}
+                        <View
+                          style={{
+                            width: 180,
+                            height: 180,
+                            borderRadius: 90,
+                            overflow: "hidden",
+                            backgroundColor: "#fff",
+                          }}
+                        >
+                          <Image
+                            source={
+                              profileImage
+                                ? { uri: profileImage }
+                                : require("../../assets/images/user.png")
+                            }
+                            style={{ width: 180, height: 180 }}
+                          />
                         </View>
-                      </TouchableOpacity>
+
+                        {/* camera button sits above the image and is not clipped */}
+                        <TouchableOpacity
+                          onPress={handleImageUpload}
+                          style={{
+                            position: "absolute",
+                            bottom: 0,
+                            right: 0,
+                            width: 50,
+                            height: 50,
+                            borderRadius: 25,
+                            backgroundColor: "#eb01f6",
+                            borderWidth: 2,
+                            borderColor: "#000",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            zIndex: 30,
+                            elevation: 10,
+                          }}
+                        >
+                          <Ionicons name="camera" size={22} color="#000" />
+                        </TouchableOpacity>
+                      </View>
                     </View>
                     {/* Username Display */}
                     <View style={{ alignItems: "center", marginBottom: 20 }}>
@@ -610,8 +644,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   topLogo: {
-    width: 100,
-    height: 100,
+    width: 80,
+    height: 80,
   },
   bottomSection: {
     flex: 0.75,

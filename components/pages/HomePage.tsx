@@ -1,6 +1,7 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
+import React from "react";
 import { useEffect, useState } from "react";
 import {
   Dimensions,
@@ -623,7 +624,7 @@ const styles = StyleSheet.create({
     marginTop: 5,
     marginBottom: 0,
     borderRadius: 50,
-    padding: 4,
+    padding: 2,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
@@ -652,6 +653,8 @@ const styles = StyleSheet.create({
     backgroundColor: "transparent",
     alignItems: "center",
     justifyContent: "center",
+    marginLeft: 2,
+    marginRight: 2,
   },
   circleIcon: {
     width: 50,
@@ -988,49 +991,54 @@ const styles = StyleSheet.create({
   consentModalContent: {
     backgroundColor: "#fff",
     borderRadius: 18,
-    padding: 20,
-    alignItems: "center",
-    maxWidth: 340,
-    width: "100%",
-    elevation: 10,
+    paddingVertical: 18,
+    paddingHorizontal: 18,
+    alignItems: "flex-start",
+    width: "92%",
+    maxWidth: 420,
+    alignSelf: "center",
   },
 
   consentModalText: {
-    fontSize: 16,
+    fontSize: 17,
     fontFamily: "HindSiliguri-Bold",
     color: "#222",
-    textAlign: "center",
+    textAlign: "left",
     marginBottom: 0,
     lineHeight: 26,
+    width: "100%",
   },
   consentModalButtons: {
     flexDirection: "row",
-    gap: 60,
-    justifyContent: "center",
+    width: "92%",
+    alignSelf: "center",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginTop: 14,
   },
+  // minimal touch wrappers so only text shows; keep vertical padding for hit area
   consentButtonYes: {
-    backgroundColor: "#eb01f6",
-    borderRadius: 10,
+    backgroundColor: "transparent",
     paddingVertical: 10,
-    paddingHorizontal: 28,
-    marginHorizontal: 4,
+    paddingHorizontal: 8,
   },
   consentButtonNo: {
-    backgroundColor: "#d1006b",
-    borderRadius: 10,
+    backgroundColor: "transparent",
     paddingVertical: 10,
-    paddingHorizontal: 28,
-    marginHorizontal: 4,
+    paddingHorizontal: 8,
   },
+  // Text styles: yes uses accent color, no is black — larger and bold
   consentButtonTextYes: {
-    color: "#fff",
-    fontSize: 16,
+    color: "#eb01f6",
+    fontSize: 20,
     fontFamily: "HindSiliguri-Bold",
+    fontWeight: "700",
   },
   consentButtonTextNo: {
-    color: "#fff",
-    fontSize: 16,
+    color: "#000",
+    fontSize: 20,
     fontFamily: "HindSiliguri-Bold",
+    fontWeight: "700",
   },
   bottomLogoContainer: {
     alignItems: "center",

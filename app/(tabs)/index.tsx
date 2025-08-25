@@ -6,6 +6,7 @@ import Notification from '../../components/Notification';
 import HomePage from '../../components/pages/HomePage';
 import ProfilePage from '../../components/pages/ProfilePage';
 import WalletPage from '../../components/pages/WalletPage';
+import React from 'react';
 
 type ActiveTab = 'trade' | 'wallet' | 'profile';
 

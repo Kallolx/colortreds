@@ -1,10 +1,8 @@
 import { useRouter } from 'expo-router';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   ActivityIndicator,
-  Animated,
   Dimensions,
-  Easing,
   Image,
   ImageBackground,
   Modal,
@@ -12,14 +10,14 @@ import {
   StyleSheet,
   Text,
   TouchableOpacity,
-  View
+  View,
 } from 'react-native';
 
 const { width, height } = Dimensions.get('window');
 
 export default function OnboardingScreen() {
   const router = useRouter();
-  const rotationValue = useRef(new Animated.Value(0)).current;
+  // Rotation animation removed — logo will be static
   const [showSplash, setShowSplash] = useState(true);
   const [isConnected, setIsConnected] = useState(true);
   const [showNoInternetModal, setShowNoInternetModal] = useState(false);
@@ -59,25 +57,7 @@ export default function OnboardingScreen() {
     return () => clearTimeout(splashTimer);
   }, []);
 
-  useEffect(() => {
-    const startRotation = () => {
-      Animated.loop(
-        Animated.timing(rotationValue, {
-          toValue: 1,
-          duration: 4000, // 4 seconds for smoother rotation
-          useNativeDriver: true,
-          easing: Easing.linear, // Linear easing for constant speed
-        })
-      ).start();
-    };
-
-    startRotation();
-  }, [rotationValue]);
-
-  const rotate = rotationValue.interpolate({
-    inputRange: [0, 1],
-    outputRange: ['0deg', '360deg'],
-  });
+  // no rotation logic
 
   const handleLogin = () => {
     router.push('/auth/login');
@@ -101,10 +81,12 @@ export default function OnboardingScreen() {
             style={styles.splashLogo}
             resizeMode="contain"
           />
-          <Text style={styles.splashTitle}>ColourTrade</Text>
+         <Text style={styles.appTitle}>
+              <Text style={{ fontFamily: 'Outfit-Bold' }}>Colour</Text>
+              <Text style={{ fontFamily: 'Outfit-Regular' }}>Trade</Text>
+            </Text>
           <View style={styles.loadingContainer}>
             <ActivityIndicator size={40} color="#FFD700" />
-            <Text style={styles.loadingText}>Checking connection...</Text>
           </View>
         </View>
         <View style={styles.splashBottomLogoContainer}>
@@ -129,9 +111,9 @@ export default function OnboardingScreen() {
         <SafeAreaView style={styles.safeArea}>
           {/* Top Logo Section */}
           <View style={styles.topSection}>
-            <Animated.Image
-              source={require('../assets/images/logo.png')} // You'll need to add this image
-              style={[styles.topLogo, { transform: [{ rotate }] }]}
+            <Image
+              source={require('../assets/images/logo.png')}
+              style={styles.topLogo}
               resizeMode="contain"
             />
           </View>
@@ -141,7 +123,7 @@ export default function OnboardingScreen() {
             {/* App Title */}
             <Text style={styles.appTitle}>
               <Text style={{ fontFamily: 'Outfit-Bold' }}>Colour</Text>
-              <Text style={{ fontFamily: 'Outfit-Medium' }}>Trade</Text>
+              <Text style={{ fontFamily: 'Outfit-Regular' }}>Trade</Text>
             </Text>
             
             {/* Description */}
@@ -222,8 +204,8 @@ const styles = StyleSheet.create({
     paddingTop: 50,
   },
   topLogo: {
-    width: 120,
-    height: 120,
+    width: 90,
+    height: 90,
   },
   bottomSection: {
     flex: 0.6,
@@ -293,8 +275,8 @@ const styles = StyleSheet.create({
     paddingBottom: 10,
   },
   bottomLogo: {
-    width: width * 0.5,
-    height: (width * 0.5) * 300 / 1060,
+    width: width * 0.32,
+    height: (width * 0.32) * 300 / 1060,
   },
   // Splash Screen Styles
   splashContainer: {
@@ -309,9 +291,9 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   splashLogo: {
-    width: 150,
-    height: 150,
-    marginBottom: 20,
+    width: 100,
+    height: 100,
+    marginBottom: 0,
   },
   splashTitle: {
     fontSize: 32,
@@ -334,8 +316,8 @@ const styles = StyleSheet.create({
     paddingBottom: 10,
   },
   splashBottomLogo: {
-    width: width * 0.5,
-    height: (width * 0.5) * 300 / 1060,
+    width: width * 0.32,
+    height: (width * 0.32) * 300 / 1060,
   },
   // Modal Styles
   modalOverlay: {
