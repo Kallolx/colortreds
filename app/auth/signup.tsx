@@ -1,4 +1,4 @@
-import { Ionicons } from "@expo/vector-icons";
+import { AntDesign, Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import React, { useRef, useState } from "react";
 import {
@@ -6,14 +6,16 @@ import {
   Dimensions,
   Image,
   ImageBackground,
+  KeyboardAvoidingView,
   Modal,
+  Platform,
   SafeAreaView,
   ScrollView,
   StyleSheet,
   Text,
   TextInput,
   TouchableOpacity,
-  View
+  View,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
@@ -142,12 +144,15 @@ export default function SignupScreen() {
         resizeMode="cover"
       >
         <SafeAreaView style={styles.safeArea}>
-          <View style={styles.topSection}>
-            <TouchableOpacity style={styles.backButton} onPress={handleBack}>
-              <Text>
-                <Text style={styles.arrowIcon}>‹ </Text>
-              </Text>
-            </TouchableOpacity>
+          <KeyboardAvoidingView
+            style={{ flex: 1 }}
+            behavior={Platform.OS === "ios" ? "padding" : "height"}
+            keyboardVerticalOffset={Platform.OS === "ios" ? 40 : 0}
+          >
+            <View style={styles.topSection}>
+              <TouchableOpacity style={styles.backButton} onPress={handleBack}>
+                <AntDesign name="arrowleft" size={32} color="black" />
+              </TouchableOpacity>
             <View style={styles.logoContainer}>
               <Animated.Image
                 source={require("../../assets/images/logo.png")}
@@ -411,7 +416,7 @@ export default function SignupScreen() {
                       <Text
                         style={{
                           fontSize: 20,
-                          fontFamily: "HindSiliguri-Bold",
+                          fontFamily: "NotoSerifBengali-Bold",
                           color: "#000",
                         }}
                       >
@@ -448,7 +453,8 @@ export default function SignupScreen() {
               />
             </View>
           </View>
-        </SafeAreaView>
+      </KeyboardAvoidingView>
+    </SafeAreaView>
       </ImageBackground>
       {/* Sex Selection Modal */}
       <Modal
@@ -622,7 +628,7 @@ const styles = StyleSheet.create({
   topSection: {
     flex: 0.25,
     paddingHorizontal: 20,
-    paddingTop: 30,
+    paddingTop: 60,
   },
   backButton: {
     paddingHorizontal: 0,
@@ -658,7 +664,7 @@ const styles = StyleSheet.create({
     color: "#000",
     textAlign: "left",
     alignSelf: "flex-start",
-    fontFamily: "HindSiliguri-Bold",
+    fontFamily: "NotoSerifBengali-Bold",
     marginBottom: 5,
   },
   subtitle: {
@@ -667,7 +673,7 @@ const styles = StyleSheet.create({
     textAlign: "left",
     alignSelf: "flex-start",
     marginBottom: 20,
-    fontFamily: "HindSiliguri-Medium",
+    fontFamily: "NotoSerifBengali-Medium",
   },
   scrollContainer: {
     flex: 1,
@@ -676,7 +682,7 @@ const styles = StyleSheet.create({
     paddingBottom: 20,
   },
   form: {
-    marginBottom: 15,
+    marginBottom: 0,
   },
   inputGroup: {
     marginBottom: 15,
@@ -685,7 +691,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: "#000",
     marginBottom: 5,
-    fontFamily: "HindSiliguri-Bold",
+    fontFamily: "NotoSerifBengali-Bold",
   },
   textInput: {
     backgroundColor: "rgba(255, 255, 255, 0.8)",
@@ -695,7 +701,7 @@ const styles = StyleSheet.create({
     paddingVertical: 15,
     paddingHorizontal: 22,
     fontSize: 16,
-    fontFamily: "HindSiliguri-Medium",
+    fontFamily: "NotoSerifBengali-Medium",
   },
   passwordContainer: {
     flexDirection: "row",
@@ -710,7 +716,7 @@ const styles = StyleSheet.create({
     paddingVertical: 15,
     paddingHorizontal: 22,
     fontSize: 16,
-    fontFamily: "HindSiliguri-Medium",
+    fontFamily: "NotoSerifBengali-Medium",
   },
   eyeIcon: {
     paddingHorizontal: 15,
@@ -733,7 +739,7 @@ const styles = StyleSheet.create({
   dropdownText: {
     fontSize: 16,
     color: "#333",
-    fontFamily: "HindSiliguri-Medium",
+    fontFamily: "NotoSerifBengali-Medium",
   },
   dropdownArrow: {
     fontSize: 16,
@@ -759,7 +765,7 @@ const styles = StyleSheet.create({
   dobBoxText: {
     fontSize: 16,
     color: "#333",
-    fontFamily: "HindSiliguri-Medium",
+    fontFamily: "NotoSerifBengali-Medium",
   },
   imageUploadSection: {
     marginTop: 10,
@@ -767,7 +773,7 @@ const styles = StyleSheet.create({
   },
   imageUploadLabel: {
     fontSize: 16,
-    fontFamily: "HindSiliguri-Bold",
+    fontFamily: "NotoSerifBengali-Bold",
     color: "#000",
     marginBottom: 8,
   },
@@ -791,7 +797,7 @@ const styles = StyleSheet.create({
   imageUploadText: {
     fontSize: 16,
     color: "#333",
-    fontFamily: "HindSiliguri-Medium",
+    fontFamily: "NotoSerifBengali-Medium",
   },
   signupButton: {
     backgroundColor: "#eb01f6",
@@ -812,7 +818,7 @@ const styles = StyleSheet.create({
   signupButtonText: {
     color: "#fff",
     fontSize: 18,
-    fontFamily: "HindSiliguri-Bold",
+    fontFamily: "NotoSerifBengali-Bold",
   },
 
   loginContainer: {
@@ -826,13 +832,13 @@ const styles = StyleSheet.create({
   loginText: {
     color: "#333",
     fontSize: 16,
-    fontFamily: "HindSiliguri-Medium",
+    fontFamily: "NotoSerifBengali-Medium",
   },
 
   loginLink: {
     color: "#eb01f6",
     fontSize: 16,
-    fontFamily: "HindSiliguri-Bold",
+    fontFamily: "NotoSerifBengali-Bold",
   },
   bottomLogoContainer: {
     alignItems: "center",
@@ -859,7 +865,7 @@ const styles = StyleSheet.create({
   },
   modalTitle: {
     fontSize: 20,
-    fontFamily: "HindSiliguri-Bold",
+    fontFamily: "NotoSerifBengali-Bold",
     color: "#000",
     textAlign: "center",
     marginBottom: 20,
@@ -872,7 +878,7 @@ const styles = StyleSheet.create({
   },
   modalOptionText: {
     fontSize: 18,
-    fontFamily: "HindSiliguri-Medium",
+    fontFamily: "NotoSerifBengali-Medium",
     color: "#333",
     textAlign: "center",
   },
@@ -886,14 +892,14 @@ const styles = StyleSheet.create({
   modalCloseText: {
     color: "#fff",
     fontSize: 16,
-    fontFamily: "HindSiliguri-Bold",
+    fontFamily: "NotoSerifBengali-Bold",
   },
   dateNote: {
     fontSize: 14,
     color: "#666",
     textAlign: "center",
     marginBottom: 15,
-    fontFamily: "HindSiliguri-Medium",
+    fontFamily: "NotoSerifBengali-Medium",
   },
   dateInputContainer: {
     flexDirection: "row",
@@ -911,7 +917,7 @@ const styles = StyleSheet.create({
     borderColor: "#ddd",
     textAlign: "center",
     fontSize: 16,
-    fontFamily: "HindSiliguri-Medium",
+    fontFamily: "NotoSerifBengali-Medium",
   },
   dateConfirmButton: {
     flex: 1,
@@ -935,7 +941,7 @@ const styles = StyleSheet.create({
   dateConfirmText: {
     color: "#fff",
     fontSize: 16,
-    fontFamily: "HindSiliguri-Bold",
+    fontFamily: "NotoSerifBengali-Bold",
   },
   // New Date Picker Styles
   dateModalContent: {
@@ -957,7 +963,7 @@ const styles = StyleSheet.create({
   },
   datePickerLabel: {
     fontSize: 16,
-    fontFamily: "HindSiliguri-Bold",
+    fontFamily: "NotoSerifBengali-Bold",
     color: "#333",
     textAlign: "center",
     marginBottom: 10,
@@ -981,7 +987,7 @@ const styles = StyleSheet.create({
   },
   dateOptionText: {
     fontSize: 14,
-    fontFamily: "HindSiliguri-Medium",
+    fontFamily: "NotoSerifBengali-Medium",
     color: "#333",
   },
   selectedDateOptionText: {
@@ -1007,7 +1013,7 @@ const styles = StyleSheet.create({
   },
   dateCancelText: {
     fontSize: 16,
-    fontFamily: "HindSiliguri-Bold",
+    fontFamily: "NotoSerifBengali-Bold",
     color: "#000",
   },
   disabledButton: {
@@ -1029,7 +1035,7 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     paddingHorizontal: 16,
     fontSize: 15,
-    fontFamily: "HindSiliguri-Medium",
+    fontFamily: "NotoSerifBengali-Medium",
     height: 60,
   },
   nextButton: {
@@ -1053,7 +1059,7 @@ const styles = StyleSheet.create({
   nextButtonText: {
     color: "#fff",
     fontSize: 16,
-    fontFamily: "HindSiliguri-Bold",
+    fontFamily: "NotoSerifBengali-Bold",
     marginRight: 6,
   },
   nextButtonIcon: {

@@ -2,6 +2,7 @@ import { useRouter } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import {
   ActivityIndicator,
+  Animated,
   Dimensions,
   Image,
   ImageBackground,
@@ -21,6 +22,10 @@ export default function OnboardingScreen() {
   const [showSplash, setShowSplash] = useState(true);
   const [isConnected, setIsConnected] = useState(true);
   const [showNoInternetModal, setShowNoInternetModal] = useState(false);
+  
+  // Animation states for dual rotating indicators
+  const rotationOuter = new Animated.Value(0);
+  const rotationInner = new Animated.Value(0);
 
   // Check internet connectivity
   const checkInternetConnection = async () => {
@@ -54,10 +59,44 @@ export default function OnboardingScreen() {
 
     checkInternetConnection();
 
-    return () => clearTimeout(splashTimer);
+    // Start dual rotation animations
+    const startRotations = () => {
+      // Outer rotation (clockwise)
+      Animated.loop(
+        Animated.timing(rotationOuter, {
+          toValue: 1,
+          duration: 2000,
+          useNativeDriver: true,
+        })
+      ).start();
+
+      // Inner rotation (counter-clockwise)
+      Animated.loop(
+        Animated.timing(rotationInner, {
+          toValue: -1,
+          duration: 1500,
+          useNativeDriver: true,
+        })
+      ).start();
+    };
+
+    startRotations();
+
+    return () => {
+      clearTimeout(splashTimer);
+    };
   }, []);
 
-  // no rotation logic
+  // Create interpolated rotation values
+  const outerRotation = rotationOuter.interpolate({
+    inputRange: [0, 1],
+    outputRange: ['0deg', '360deg'],
+  });
+
+  const innerRotation = rotationInner.interpolate({
+    inputRange: [-1, 0],
+    outputRange: ['-360deg', '0deg'],
+  });
 
   const handleLogin = () => {
     router.push('/auth/login');
@@ -82,11 +121,15 @@ export default function OnboardingScreen() {
             resizeMode="contain"
           />
          <Text style={styles.appTitle}>
-              <Text style={{ fontFamily: 'Outfit-Bold' }}>Colour</Text>
-              <Text style={{ fontFamily: 'Outfit-Regular' }}>Trade</Text>
+            <Image source={require('../assets/images/app-logo-2.png')} style={{ width: 200, height: 30}}/>
             </Text>
           <View style={styles.loadingContainer}>
-            <ActivityIndicator size={40} color="#FFD700" />
+            <Animated.View style={[{ transform: [{ rotate: outerRotation }] }]}>
+              <ActivityIndicator size={60} color="#FFD700" />
+            </Animated.View>
+            <Animated.View style={[styles.innerIndicator, { transform: [{ rotate: innerRotation }] }]}>
+              <ActivityIndicator size={30} color="#f60101" />
+            </Animated.View>
           </View>
         </View>
         <View style={styles.splashBottomLogoContainer}>
@@ -122,17 +165,16 @@ export default function OnboardingScreen() {
           <View style={styles.bottomSection}>
             {/* App Title */}
             <Text style={styles.appTitle}>
-              <Text style={{ fontFamily: 'Outfit-Bold' }}>Colour</Text>
-              <Text style={{ fontFamily: 'Outfit-Regular' }}>Trade</Text>
+              <Image source={require('../assets/images/app-logo-2.png')} style={{ width: 200, height: 30}}/>
             </Text>
             
             {/* Description */}
             <Text style={styles.description}>
-              <Text style={{ fontFamily: 'HindSiliguri-Bold' }}>কালার ট্রেড: </Text>
-              <Text style={{ fontFamily: 'HindSiliguri-Medium' }}>
+              <Text style={{ fontFamily: 'NotoSerifBengali-Bold', fontSize: 18 }}>কালার ট্রেড: </Text>
+              <Text style={{ fontFamily: 'NotoSerifBengali-Regular', fontSize: 18 }}>
                 রঙের সাথে অর্থ উপার্জনের{'\n'}
                 দারুন সুযোগ, সাফল্যের নতুন দিগন্ত উন্মোচন{'\n'}
-                করুন । আজ থেকেই আপনার অর্থনৈতিক মুক্তির{'\n'}
+                করুন । আজ থেকেই আপনার অর্থনৈতিক মুক্তির
                 যাত্রা শুরু করুন!
               </Text>
             </Text>
@@ -215,9 +257,7 @@ const styles = StyleSheet.create({
     paddingBottom: 0,
   },
   appTitle: {
-    fontSize: 36,
-    color: '#333333',
-    marginBottom: 8,
+    marginBottom: 12,
     textAlign: 'left',
     alignSelf: 'flex-start',
   },
@@ -225,9 +265,10 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#333333',
     textAlign: 'left',
-    lineHeight: 22,
+    lineHeight: 24,
     marginBottom: 20,
     alignSelf: 'flex-start',
+    
   },
   buttonContainer: {
     width: '100%',
@@ -252,7 +293,7 @@ const styles = StyleSheet.create({
   loginButtonText: {
     color: '#FFFFFF',
     fontSize: 18,
-    fontFamily: 'HindSiliguri-Bold',
+    fontFamily: 'NotoSerifBengali-Bold',
   },
   signupButton: {
     backgroundColor: 'orange',
@@ -267,12 +308,12 @@ const styles = StyleSheet.create({
   signupButtonText: {
     color: '#FFFFFF',
     fontSize: 18,
-    fontFamily: 'HindSiliguri-Bold',
+    fontFamily: 'NotoSerifBengali-Bold',
   },
   bottomLogoContainer: {
     alignItems: 'center',
     marginBottom: 10,
-    paddingBottom: 10,
+    paddingBottom: 30,
   },
   bottomLogo: {
     width: width * 0.32,
@@ -291,8 +332,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   splashLogo: {
-    width: 100,
-    height: 100,
+    width: 90,
+    height: 90,
     marginBottom: 0,
   },
   splashTitle: {
@@ -304,6 +345,12 @@ const styles = StyleSheet.create({
   loadingContainer: {
     alignItems: 'center',
     gap: 15,
+    position: 'relative',
+  },
+  innerIndicator: {
+    position: 'absolute',
+    top: 15,
+    left: 15,
   },
   loadingText: {
     fontSize: 16,

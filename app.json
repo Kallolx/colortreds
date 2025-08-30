@@ -1,11 +1,11 @@
 {
   "expo": {
-    "name": "colortreds",
+    "name": "Colourtrade",
     "slug": "colortreds",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "colortreds",
+    "scheme": "colourtrade",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {

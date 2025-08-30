@@ -1,12 +1,13 @@
 import { Ionicons } from "@expo/vector-icons";
 import * as Clipboard from "expo-clipboard";
 import { Image } from "expo-image";
-import React from "react";
-import { useState } from "react";
+import React, { useState } from "react";
 import {
   Alert,
   Dimensions,
+  KeyboardAvoidingView,
   Modal,
+  Platform,
   ScrollView,
   StyleSheet,
   Text,
@@ -92,7 +93,11 @@ export default function DepositModal({
       visible={visible}
       onRequestClose={onClose}
     >
-      <View style={styles.modalOverlay}>
+      <KeyboardAvoidingView 
+        style={styles.modalOverlay}
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 20}
+      >
         <View style={styles.modalContent}>
           {/* Header with close button and title */}
           <View style={styles.headerSection}>
@@ -124,10 +129,13 @@ export default function DepositModal({
             </View>
           ) : null}
 
-          {/* Form section */}
+          {/* All content in single ScrollView for consistent scrolling */}
           <ScrollView
             style={styles.formSection}
             showsVerticalScrollIndicator={false}
+            contentContainerStyle={styles.scrollContent}
+            nestedScrollEnabled={true}
+            keyboardShouldPersistTaps="handled"
           >
             <View style={styles.inputGroup}>
               <View style={{ position: 'relative', justifyContent: 'center' }}>
@@ -148,7 +156,7 @@ export default function DepositModal({
                     textAlignVertical: 'center',
                     fontSize: 18,
                     color: '#000',
-                    fontFamily: 'HindSiliguri-Medium',
+                    fontFamily: 'NotoSerifBengali-Medium',
                     height: '100%',
                     display: 'flex',
                     alignItems: 'center',
@@ -181,7 +189,7 @@ export default function DepositModal({
               />
             </View>
 
-            <View style={[styles.inputGroup, {marginBottom: 0}]}>
+            <View style={styles.inputGroup}>
               <TextInput
                 style={styles.textInput}
                 value={transactionId}
@@ -190,30 +198,30 @@ export default function DepositModal({
                 placeholderTextColor="#999"
               />
             </View>
+
+            {/* Buttons */}
+            <View style={styles.buttonContainer}>
+              <TouchableOpacity style={styles.cancelButton} onPress={onClose}>
+                <Text style={styles.cancelButtonText}>বাতিল</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.confirmButton}
+                onPress={handleSubmit}
+              >
+                <Text style={styles.confirmButtonText}>নিশ্চিত</Text>
+              </TouchableOpacity>
+            </View>
+
+            {/* Victor Logo */}
+            <View style={styles.headerSection}>
+              <Image
+                source={require("../../assets/images/victor-logo.png")}
+                style={styles.victorLogo}
+              />
+            </View>
           </ScrollView>
-
-          {/* Buttons */}
-          <View style={styles.buttonContainer}>
-            <TouchableOpacity style={styles.cancelButton} onPress={onClose}>
-              <Text style={styles.cancelButtonText}>বাতিল</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.confirmButton}
-              onPress={handleSubmit}
-            >
-              <Text style={styles.confirmButtonText}>নিশ্চিত</Text>
-            </TouchableOpacity>
-          </View>
-
-          {/* Victor Logo */}
-          <View style={styles.headerSection}>
-            <Image
-              source={require("../../assets/images/victor-logo.png")}
-              style={styles.victorLogo}
-            />
-          </View>
         </View>
-      </View>
+      </KeyboardAvoidingView>
     </Modal>
   );
 }
@@ -223,6 +231,7 @@ const styles = StyleSheet.create({
     width: 140,
     height: 40,
     marginTop: 20,
+    marginBottom: 10,
   },
   modalOverlay: {
     flex: 1,
@@ -233,7 +242,7 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
-    height: "90%",
+    maxHeight: "90%",
     paddingTop: 8,
     paddingHorizontal: 16,
     paddingBottom: 20,
@@ -258,7 +267,7 @@ const styles = StyleSheet.create({
 
   headerTitle: {
     fontSize: 20,
-    fontFamily: "HindSiliguri-Bold",
+    fontFamily: "NotoSerifBengali-Bold",
     color: "#1A1A1A",
     marginBottom: 4,
   },
@@ -268,21 +277,21 @@ const styles = StyleSheet.create({
   },
   accountLabel: {
     fontSize: 20,
-    fontFamily: "HindSiliguri-Regular",
+    fontFamily: "NotoSerifBengali-Regular",
     color: "#666666",
   },
   accountName: {
     fontSize: 20,
-    fontFamily: "HindSiliguri-SemiBold",
+    fontFamily: "NotoSerifBengali-SemiBold",
     color: "#000",
   },
   merchantSection: {
     marginTop: 20,
-    marginBottom: 20,
+    marginBottom: 0,
   },
   sendToLabel: {
     fontSize: 18,
-    fontFamily: "HindSiliguri-Medium",
+    fontFamily: "NotoSerifBengali-Medium",
     color: "#666666",
 
     textAlign: "center",
@@ -302,7 +311,11 @@ const styles = StyleSheet.create({
     padding: 4,
   },
   formSection: {
-    marginBottom: 8,
+    marginTop: 10,
+  },
+  scrollContent: {
+    paddingBottom: 0,
+    paddingTop: 10,
   },
   inputGroup: {
     marginBottom: 20,
@@ -313,9 +326,9 @@ const styles = StyleSheet.create({
     borderRadius: 50,
     paddingHorizontal: 24,
     paddingVertical: 16,
-    fontSize: 18,
     backgroundColor: "#ededed",
-    fontFamily: "HindSiliguri-Medium",
+    fontSize: 18,    
+    fontFamily: "NotoSerifBengali-Medium",
   },
   buttonContainer: {
     flexDirection: "row",
@@ -334,7 +347,7 @@ const styles = StyleSheet.create({
   },
   cancelButtonText: {
     fontSize: 18,
-    fontFamily: "HindSiliguri-Bold",
+    fontFamily: "NotoSerifBengali-Bold",
     color: "#666666",
   },
   confirmButton: {
@@ -347,7 +360,7 @@ const styles = StyleSheet.create({
   },
   confirmButtonText: {
     fontSize: 18,
-    fontFamily: "HindSiliguri-Bold",
+    fontFamily: "NotoSerifBengali-Bold",
     color: "white",
   },
 });

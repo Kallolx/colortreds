@@ -23,6 +23,10 @@ export default function RootLayout() {
     'HindSiliguri-Medium': require('../assets/fonts/HindSiliguri-Medium.ttf'),
     'HindSiliguri-SemiBold': require('../assets/fonts/HindSiliguri-SemiBold.ttf'),
     'HindSiliguri-Bold': require('../assets/fonts/HindSiliguri-Bold.ttf'),
+    'NotoSerifBengali-Bold': require('../assets/fonts/NotoSerifBengali-Bold.ttf'),
+    'NotoSerifBengali-Regular': require('../assets/fonts/NotoSerifBengali-Regular.ttf'),
+    'NotoSerifBengali-Medium': require('../assets/fonts/NotoSerifBengali-Medium.ttf'),
+    'NotoSerifBengali-SemiBold': require('../assets/fonts/NotoSerifBengali-SemiBold.ttf'),
   });
 
   useEffect(() => {

@@ -120,7 +120,7 @@ export default function WithdrawModal({
                       top: '39%',
                       transform: [{ translateY: -12 }],
                       color: '#000',
-                      fontFamily: 'HindSiliguri-Medium',
+                      fontFamily: 'NotoSerifBengali-Medium',
                       fontSize: 18,
                       zIndex: 2,
                     }}
@@ -211,7 +211,7 @@ const styles = StyleSheet.create({
 
   headerTitle: {
     fontSize: 20,
-    fontFamily: "HindSiliguri-Bold",
+    fontFamily: "NotoSerifBengali-Bold",
     color: "#1A1A1A",
     marginBottom: 4,
   },
@@ -221,12 +221,12 @@ const styles = StyleSheet.create({
   },
   accountLabel: {
     fontSize: 20,
-    fontFamily: "HindSiliguri-Regular",
+    fontFamily: "NotoSerifBengali-Regular",
     color: "#666666",
   },
   accountName: {
     fontSize: 20,
-    fontFamily: "HindSiliguri-SemiBold",
+    fontFamily: "NotoSerifBengali-SemiBold",
     color: "#000",
   },
   inputLabel: {
@@ -244,7 +244,7 @@ const styles = StyleSheet.create({
     paddingVertical: 16,
     fontSize: 18,
     backgroundColor: "#ededed",
-    fontFamily: "HindSiliguri-Medium",
+    fontFamily: "NotoSerifBengali-Medium",
     marginBottom: 10,
   },
   modalButtons: {
@@ -263,7 +263,7 @@ const styles = StyleSheet.create({
   },
   cancelButtonText: {
     fontSize: 18,
-    fontFamily: "HindSiliguri-Bold",
+    fontFamily: "NotoSerifBengali-Bold",
     color: "#666666",
   },
   confirmButton: {
@@ -276,7 +276,7 @@ const styles = StyleSheet.create({
   },
   confirmButtonText: {
     fontSize: 18,
-    fontFamily: "HindSiliguri-Bold",
+    fontFamily: "NotoSerifBengali-Bold",
     color: "white",
   },
   selectedMethodContainer: {

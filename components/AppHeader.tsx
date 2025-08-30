@@ -1,13 +1,15 @@
 import React from 'react';
-import { Image, StyleSheet, Text, View } from 'react-native';
+import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 interface AppHeaderProps {
   userBalance: number;
   activeTab: 'trade' | 'wallet' | 'profile';
+  onRequestsPress?: () => void;
+  onCalculatorPress?: () => void;
 }
 
-export default function AppHeader({ userBalance, activeTab }: AppHeaderProps) {
+export default function AppHeader({ userBalance, activeTab, onRequestsPress, onCalculatorPress }: AppHeaderProps) {
   const insets = useSafeAreaInsets();
 
   // Helper to convert English digits to Bengali
@@ -67,17 +69,38 @@ export default function AppHeader({ userBalance, activeTab }: AppHeaderProps) {
           )}
         </View>
 
-        {/* Balance Section */}
+                {/* Balance Section */}
         <View style={styles.balanceSection}>
-          <View style={styles.balanceContainer}>
-            <Image 
-              source={require('../assets/images/icons/coin.png')} 
-              style={styles.coinIcon} 
-            />
-            <Text style={styles.balanceAmount}>
-              ৳{toBengaliNumber(userBalance)}
-            </Text>
-          </View>
+          {activeTab === 'wallet' ? (
+            <TouchableOpacity 
+              style={styles.balanceContainer}
+              onPress={onRequestsPress}
+            >
+              <Text style={styles.balanceAmount}>
+                অনুরোধসমূহ
+              </Text>
+            </TouchableOpacity>
+          ) : activeTab === 'profile' ? (
+            <TouchableOpacity 
+              style={styles.balanceContainer}
+              onPress={onCalculatorPress}
+            >
+              <Image 
+                source={require('../assets/images/icons/calculator.png')} 
+                style={styles.calculatorIcon} 
+              />
+            </TouchableOpacity>
+          ) : (
+            <View style={styles.balanceContainer}>
+              <Image 
+                source={require('../assets/images/icons/coin.png')} 
+                style={styles.coinIcon} 
+              />
+              <Text style={styles.balanceAmount}>
+                {toBengaliNumber(userBalance)}
+              </Text>
+            </View>
+          )}
         </View>
       </View>
     </View>
@@ -89,8 +112,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFFF00',
     paddingHorizontal: 10,
     paddingBottom: 10,
-    borderBottomLeftRadius: 24,
-    borderBottomRightRadius: 24,
+    // Removed rounded corners since header is now at the back
   },
   headerContent: {
     flexDirection: 'row',
@@ -116,7 +138,7 @@ const styles = StyleSheet.create({
   },
   pageTitle: {
     fontSize: 24,
-    fontFamily: 'HindSiliguri-Bold',
+    fontFamily: 'NotoSerifBengali-Bold',
     color: '#000',
     textAlign: 'left',
   },
@@ -136,7 +158,7 @@ const styles = StyleSheet.create({
   },
   balanceAmount: {
     fontSize: 18,
-    fontFamily: 'HindSiliguri-Bold',
+    fontFamily: 'NotoSerifBengali-Bold',
     color: '#000',
     marginLeft: 6,
     letterSpacing: 0.5,
@@ -144,5 +166,10 @@ const styles = StyleSheet.create({
   coinIcon: {
     width: 24,
     height: 24,
+  },
+  calculatorIcon: {
+    width: 30,
+    height: 30,
+    marginLeft: 4,
   },
 });

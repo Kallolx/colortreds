@@ -1,8 +1,7 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
-import React from "react";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Dimensions,
   Modal,
@@ -181,13 +180,13 @@ export default function HomePage() {
             <Text style={styles.consentModalText}>
               আপনি এই অ্যাপ ব্যবহারের{" "}
               <Text
-                style={{ color: "#FF00FF", fontFamily: "HindSiliguri-Bold" }}
+                style={{ color: "#FF00FF", fontFamily: "NotoSerifBengali-Bold" }}
               >
                 শর্তাবলী
               </Text>
               ,{" "}
               <Text
-                style={{ color: "#FF00FF", fontFamily: "HindSiliguri-Bold" }}
+                style={{ color: "#FF00FF", fontFamily: "NotoSerifBengali-Bold" }}
               >
                 গোপনীয়তা নীতি
               </Text>{" "}
@@ -224,7 +223,7 @@ export default function HomePage() {
               আজকের ট্রেড সমাপ্ত হয়েছে। কালকে সকাল ৯টা থেকে আবার শুরু করুন।
               {"\n"}
               <Text
-                style={{ color: "#FF00FF", fontFamily: "HindSiliguri-Bold" }}
+                style={{ color: "#FF00FF", fontFamily: "NotoSerifBengali-Bold" }}
               >
                 শর্তাবলী
               </Text>
@@ -396,7 +395,7 @@ export default function HomePage() {
               <View style={styles.roundDateSection}>
                 <Text style={styles.roundText}>
                   রাউন্ড{" "}
-                  <Text style={{ fontFamily: "HindSiliguri-Bold" }}>
+                  <Text style={{ fontFamily: "NotoSerifBengali-Bold" }}>
                     {toBengaliNumber(bet.roundNumber)}
                   </Text>
                 </Text>
@@ -408,7 +407,7 @@ export default function HomePage() {
                 <Text style={styles.winnersText}>
                   বিজয়ী সংখ্যা:{" "}
                   <Text
-                    style={{ fontFamily: "HindSiliguri-Bold", fontSize: 16 }}
+                    style={{ fontFamily: "NotoSerifBengali-Bold", fontSize: 16 }}
                   >
                     {bet.winnersCount}
                   </Text>
@@ -498,7 +497,7 @@ export default function HomePage() {
                     right: 25,
                     top: 15,
                     color: '#000',
-                    fontFamily: 'HindSiliguri-Medium',
+                    fontFamily: 'NotoSerifBengali-Medium',
                     fontSize: 18,
                     zIndex: 2,
                   }}
@@ -541,7 +540,7 @@ export default function HomePage() {
 const styles = StyleSheet.create({
   roundNumberValue: {
     fontSize: 20,
-    fontFamily: "HindSiliguri-Bold",
+    fontFamily: "NotoSerifBengali-Bold",
     color: "#222",
     textAlign: "right",
     flex: 1,
@@ -585,7 +584,7 @@ const styles = StyleSheet.create({
   },
   selectedColorNameBig: {
     fontSize: 32,
-    fontFamily: "HindSiliguri-Bold",
+    fontFamily: "NotoSerifBengali-Bold",
     color: "#ff8c00",
   },
   adsText: {
@@ -596,8 +595,8 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-    backgroundColor: "#f5f5f5",
   },
+  
   graphCard: {
     backgroundColor: "#fff",
     margin: 15,
@@ -667,12 +666,12 @@ const styles = StyleSheet.create({
   },
   roundNumber: {
     fontSize: 18,
-    fontFamily: "HindSiliguri-Bold",
+    fontFamily: "NotoSerifBengali-Bold",
     color: "#333",
   },
   roundLabel: {
     fontSize: 14,
-    fontFamily: "HindSiliguri-Medium",
+    fontFamily: "NotoSerifBengali-Medium",
     color: "#666",
   },
   timerSection: {
@@ -680,9 +679,9 @@ const styles = StyleSheet.create({
   },
   timerLabel: {
     fontSize: 10,
-    fontFamily: "HindSiliguri-Medium",
+    fontFamily: "NotoSerifBengali-Medium",
     color: "#666",
-    marginBottom: 6,
+    marginBottom: 2,
   },
   timerDigitsContainer: {
     flexDirection: "row",
@@ -691,14 +690,14 @@ const styles = StyleSheet.create({
   },
   digitContainer: {
     backgroundColor: "#000",
-    borderRadius: 6,
+    borderRadius: 2,
     paddingHorizontal: 6,
     paddingVertical: 4,
     alignItems: "center",
   },
   digitText: {
     fontSize: 16,
-    fontFamily: "HindSiliguri-Bold",
+    fontFamily: "NotoSerifBengali-Bold",
     color: "#fff",
   },
   colonContainer: {
@@ -706,7 +705,7 @@ const styles = StyleSheet.create({
   },
   colonText: {
     fontSize: 16,
-    fontFamily: "HindSiliguri-Bold",
+    fontFamily: "NotoSerifBengali-Bold",
     color: "#000",
   },
   roundInfoDivider: {
@@ -737,7 +736,7 @@ const styles = StyleSheet.create({
   colorLabelText: {
     position: "absolute",
     fontSize: 10,
-    fontFamily: "HindSiliguri-Medium",
+    fontFamily: "NotoSerifBengali-Medium",
     textShadowColor: "rgba(255, 255, 255, 0.8)",
     textShadowOffset: { width: 1, height: 1 },
     textShadowRadius: 2,
@@ -765,13 +764,13 @@ const styles = StyleSheet.create({
   },
   colorButtonText: {
     fontSize: 16,
-    fontFamily: "HindSiliguri-Bold",
+    fontFamily: "NotoSerifBengali-Bold",
     color: "#fff",
     textAlign: "center",
   },
   sectionTitle: {
     fontSize: 16,
-    fontFamily: "HindSiliguri-Bold",
+    fontFamily: "NotoSerifBengali-Bold",
     color: "#000",
     marginBottom: 0,
     textAlign: "center",
@@ -779,7 +778,7 @@ const styles = StyleSheet.create({
 
   sectionTitle2: {
     fontSize: 12,
-    fontFamily: "HindSiliguri-Medium",
+    fontFamily: "NotoSerifBengali-Medium",
     color: "#333",
     marginBottom: 4,
     textAlign: "center",
@@ -790,14 +789,14 @@ const styles = StyleSheet.create({
     marginTop: 10,
     padding: 10,
     borderRadius: 15,
-    marginBottom: 100,
+    // marginBottom removed since it's now handled globally by the content wrapper
   },
   betsHeader: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
     marginBottom: 0,
-    fontFamily: "HindSiliguri-Bold",
+    fontFamily: "NotoSerifBengali-Bold",
   },
   betHistoryItem: {
     flexDirection: "row",
@@ -819,13 +818,13 @@ const styles = StyleSheet.create({
   },
   roundText: {
     fontSize: 16,
-    fontFamily: "HindSiliguri-Medium",
+    fontFamily: "NotoSerifBengali-Medium",
     color: "#222",
     marginBottom: 2,
   },
   dateTimeText: {
     fontSize: 14,
-    fontFamily: "HindSiliguri-Regular",
+    fontFamily: "NotoSerifBengali-Regular",
     color: "#666",
   },
   winnersSection: {
@@ -833,7 +832,7 @@ const styles = StyleSheet.create({
   },
   winnersText: {
     fontSize: 14,
-    fontFamily: "HindSiliguri-Medium",
+    fontFamily: "NotoSerifBengali-Medium",
     color: "#333",
     marginBottom: 4,
   },
@@ -844,7 +843,7 @@ const styles = StyleSheet.create({
   },
   winnerLabel: {
     fontSize: 12,
-    fontFamily: "HindSiliguri-Regular",
+    fontFamily: "NotoSerifBengali-Regular",
     color: "#666",
   },
   winnerColorBox: {
@@ -889,13 +888,13 @@ const styles = StyleSheet.create({
   },
   selectedColorName: {
     fontSize: 24,
-    fontFamily: "HindSiliguri-Bold",
+    fontFamily: "NotoSerifBengali-Bold",
     color: "#ff8c00",
     marginBottom: 20,
   },
   betAmountLabel: {
     fontSize: 16,
-    fontFamily: "HindSiliguri-Medium",
+    fontFamily: "NotoSerifBengali-Medium",
     color: "#333",
     marginBottom: 16,
     textAlign: "left",
@@ -907,7 +906,7 @@ const styles = StyleSheet.create({
   },
   betAmountLabelLeft: {
     fontSize: 18,
-    fontFamily: "HindSiliguri-Bold",
+    fontFamily: "NotoSerifBengali-Bold",
     color: "#333",
     textAlign: "left",
   },
@@ -917,7 +916,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 16,
     fontSize: 16,
-    fontFamily: "HindSiliguri-Regular",
+    fontFamily: "NotoSerifBengali-Regular",
     borderWidth: 1,
     borderColor: "#000000",
     marginBottom: 24,
@@ -941,7 +940,7 @@ const styles = StyleSheet.create({
   },
   cancelBtnText: {
     fontSize: 16,
-    fontFamily: "HindSiliguri-Bold",
+    fontFamily: "NotoSerifBengali-Bold",
     color: "#666",
   },
   confirmBtn: {
@@ -953,7 +952,7 @@ const styles = StyleSheet.create({
   },
   confirmBtnText: {
     fontSize: 16,
-    fontFamily: "HindSiliguri-Bold",
+    fontFamily: "NotoSerifBengali-Bold",
     color: "#fff",
   },
   modalFooter: {
@@ -972,13 +971,13 @@ const styles = StyleSheet.create({
   logoText: {
     fontSize: 12,
     color: "#333",
-    fontFamily: "HindSiliguri-Bold",
+    fontFamily: "NotoSerifBengali-Bold",
     marginLeft: 4,
   },
   taglineText: {
     fontSize: 8,
     color: "#666",
-    fontFamily: "HindSiliguri-Regular",
+    fontFamily: "NotoSerifBengali-Regular",
     textAlign: "center",
   },
   consentModalOverlay: {
@@ -991,9 +990,9 @@ const styles = StyleSheet.create({
   consentModalContent: {
     backgroundColor: "#fff",
     borderRadius: 18,
-    paddingVertical: 18,
-    paddingHorizontal: 18,
-    alignItems: "flex-start",
+    paddingVertical: 24,
+    paddingHorizontal: 24,
+    alignItems: "center",
     width: "92%",
     maxWidth: 420,
     alignSelf: "center",
@@ -1001,43 +1000,43 @@ const styles = StyleSheet.create({
 
   consentModalText: {
     fontSize: 17,
-    fontFamily: "HindSiliguri-Bold",
+    fontFamily: "NotoSerifBengali-Bold",
     color: "#222",
-    textAlign: "left",
+    textAlign: "center",
     marginBottom: 0,
     lineHeight: 26,
     width: "100%",
   },
   consentModalButtons: {
     flexDirection: "row",
-    width: "92%",
-    alignSelf: "center",
+    width: "100%",
     justifyContent: "space-between",
     alignItems: "center",
-    marginTop: 14,
+    marginTop: 20,
+    paddingHorizontal: 10,
   },
   // minimal touch wrappers so only text shows; keep vertical padding for hit area
   consentButtonYes: {
     backgroundColor: "transparent",
-    paddingVertical: 10,
-    paddingHorizontal: 8,
+    paddingVertical: 12,
+    paddingHorizontal: 16,
   },
   consentButtonNo: {
     backgroundColor: "transparent",
-    paddingVertical: 10,
-    paddingHorizontal: 8,
+    paddingVertical: 12,
+    paddingHorizontal: 16,
   },
   // Text styles: yes uses accent color, no is black — larger and bold
   consentButtonTextYes: {
     color: "#eb01f6",
     fontSize: 20,
-    fontFamily: "HindSiliguri-Bold",
+    fontFamily: "NotoSerifBengali-Bold",
     fontWeight: "700",
   },
   consentButtonTextNo: {
     color: "#000",
     fontSize: 20,
-    fontFamily: "HindSiliguri-Bold",
+    fontFamily: "NotoSerifBengali-Bold",
     fontWeight: "700",
   },
   bottomLogoContainer: {

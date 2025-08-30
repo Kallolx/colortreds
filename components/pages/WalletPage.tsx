@@ -46,11 +46,18 @@ const paymentMethods: PaymentMethod[] = [
   { id: "upay", name: "উপায়", type: "mobile", icon: "" },
 ];
 
-export default function WalletPage() {
+interface WalletPageProps {
+  historyModalVisible: boolean;
+  setHistoryModalVisible: (visible: boolean) => void;
+}
+
+export default function WalletPage({
+  historyModalVisible,
+  setHistoryModalVisible,
+}: WalletPageProps) {
   const [userBalance] = useState(10000);
   const [depositModalVisible, setDepositModalVisible] = useState(false);
   const [withdrawModalVisible, setWithdrawModalVisible] = useState(false);
-  const [historyModalVisible, setHistoryModalVisible] = useState(false);
   const [selectedPaymentMethod, setSelectedPaymentMethod] =
     useState<PaymentMethod | null>(null);
   const [notificationVisible, setNotificationVisible] = useState(false);
@@ -86,10 +93,7 @@ export default function WalletPage() {
 
   return (
     <View style={styles.container}>
-      <ScrollView
-        contentContainerStyle={{ paddingBottom: 100 }}
-        showsVerticalScrollIndicator={false}
-      >
+      <ScrollView showsVerticalScrollIndicator={false}>
         {/* ATM Card */}
         <View style={styles.cardContainer}>
           <View style={styles.atmCard}>
@@ -100,9 +104,7 @@ export default function WalletPage() {
                 style={{ width: 200, height: 40, resizeMode: "contain" }}
               />
             </View>
-            <View style={styles.chip}>
-              <View style={styles.chipInner} />
-            </View>
+            <View style={styles.chip} />
 
             {/* Balance with label above */}
             <View
@@ -174,9 +176,6 @@ export default function WalletPage() {
             }}
           >
             <Text style={styles.withdrawTitle}>উইথড্র করুন</Text>
-            <TouchableOpacity onPress={() => setHistoryModalVisible(true)}>
-              <Text style={styles.historyButton}>ইতিহাস</Text>
-            </TouchableOpacity>
           </View>
           <View style={styles.withdrawPaymentBox}>
             {paymentMethods.map((method, idx) => (
@@ -206,7 +205,7 @@ export default function WalletPage() {
 
         {/* Ads Section */}
         <View style={styles.adsCard}>
-          <Text style={styles.adsText}>ADS Here</Text>
+          <Text style={styles.adsText}>Native Ads</Text>
         </View>
 
         {/* Victor Logo */}
@@ -215,7 +214,7 @@ export default function WalletPage() {
             source={require("../../assets/images/victor-logo.png")}
             style={styles.victorLogo}
           />
-        </View>
+        </View> 
       </ScrollView>
 
       <DepositModal
@@ -310,7 +309,7 @@ export default function WalletPage() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#f5f5f5",
+    // Background color removed since it's now handled by the floating wrapper
   },
 
   vewText: {
@@ -344,21 +343,17 @@ const styles = StyleSheet.create({
   },
 
   chip: {
-    width: 55,
+    width: 65,
     height: 45,
-    backgroundColor: "#FF2C2C",
+    backgroundColor: "#f88713",
     borderRadius: 8,
     justifyContent: "center",
     alignItems: "center",
     alignSelf: "flex-end",
-    marginTop: 10,
-  },
-
-  chipInner: {
-    width: 45,
-    height: 35,
-    backgroundColor: "#FFA500",
-    borderRadius: 4,
+    marginTop: 20,
+    marginRight: 20,
+    borderWidth: 1,
+    borderColor: "#000",
   },
 
   cardFooter: {
@@ -368,7 +363,7 @@ const styles = StyleSheet.create({
 
   cardValue: {
     fontSize: 14,
-    fontFamily: "HindSiliguri-Bold",
+    fontFamily: "NotoSerifBengali-Bold",
     color: "#000",
   },
   balanceContainer: {
@@ -386,7 +381,7 @@ const styles = StyleSheet.create({
   },
   balanceAmount: {
     fontSize: 32,
-    fontFamily: "HindSiliguri-Bold",
+    fontFamily: "NotoSerifBengali-Bold",
     color: "#000",
     marginBottom: 0,
     paddingBottom: 0,
@@ -433,7 +428,7 @@ const styles = StyleSheet.create({
   },
   depositTitle: {
     fontSize: 20,
-    fontFamily: "HindSiliguri-Bold",
+    fontFamily: "NotoSerifBengali-Bold",
     color: "#333",
     marginLeft: 10,
     marginTop: 10,
@@ -441,9 +436,9 @@ const styles = StyleSheet.create({
   paymentBox: {
     flexDirection: "row",
     borderWidth: 1,
-    borderColor: "#e9ecef",
-    borderRadius: 12,
-    backgroundColor: "#f8f9fa",
+    borderColor: "#000",
+    borderRadius: 6,
+    backgroundColor: "#fff",
     overflow: "hidden",
     alignItems: "center",
     justifyContent: "space-between",
@@ -465,7 +460,7 @@ const styles = StyleSheet.create({
   },
   withdrawTitle: {
     fontSize: 20,
-    fontFamily: "HindSiliguri-Bold",
+    fontFamily: "NotoSerifBengali-Bold",
     color: "#333",
     marginLeft: 10,
     marginBottom: 0,
@@ -474,17 +469,18 @@ const styles = StyleSheet.create({
   withdrawPaymentBox: {
     flexDirection: "row",
     borderWidth: 1,
-    borderColor: "#e9ecef",
-    borderRadius: 12,
-    backgroundColor: "#f8f9fa",
+    borderColor: "#000",
+    borderRadius: 6,
+    backgroundColor: "#fff",
     overflow: "hidden",
     alignItems: "center",
     justifyContent: "space-between",
     marginHorizontal: 10,
+    marginBottom: 0,
   },
   historyButton: {
     color: "#007AFF",
-    fontFamily: "HindSiliguri-Bold",
+    fontFamily: "NotoSerifBengali-Bold",
     fontSize: 16,
     marginRight: 20,
   },
@@ -497,19 +493,19 @@ const styles = StyleSheet.create({
   },
   verticalDivider: {
     width: 1,
-    height: 64,
-    backgroundColor: "#e9ecef",
+    height: 75,
+    backgroundColor: "#000",
   },
   paymentIcon: {
     fontSize: 32,
   },
   paymentImage: {
-    width: 68,
-    height: 52,
+    width: 70,
+    height: 55,
   },
   paymentName: {
     fontSize: 16,
-    fontFamily: "HindSiliguri-Bold",
+    fontFamily: "NotoSerifBengali-Bold",
     color: "#333",
   },
   withdrawButton: {
@@ -656,20 +652,20 @@ const styles = StyleSheet.create({
     color: "#fff",
   },
   adsCard: {
-    backgroundColor: "#d7d8d8",
+    backgroundColor: "#afacac",
     margin: 15,
     marginBottom: 20,
     marginTop: 0,
     padding: 0,
     borderRadius: 12,
-    height: 70,
+    height: 100,
     justifyContent: "center",
     alignItems: "center",
   },
   adsText: {
-    fontSize: 18,
+    fontSize: 28,
     fontFamily: "Outfit-Bold",
-    color: "#888",
+    color: "#fff",
     letterSpacing: 1,
   },
   // History Modal Styles
@@ -694,7 +690,7 @@ const styles = StyleSheet.create({
   },
   historyTitle: {
     fontSize: 20,
-    fontFamily: "HindSiliguri-Bold",
+    fontFamily: "NotoSerifBengali-Bold",
     color: "#333",
   },
   closeButton: {
@@ -728,13 +724,13 @@ const styles = StyleSheet.create({
   },
   requestNumber: {
     fontSize: 14,
-    fontFamily: "HindSiliguri-SemiBold",
+    fontFamily: "NotoSerifBengali-SemiBold",
     color: "#333",
     marginBottom: 2,
   },
   requestType: {
     fontSize: 12,
-    fontFamily: "HindSiliguri-Regular",
+    fontFamily: "NotoSerifBengali-Regular",
     color: "#666",
   },
   requestAmount: {
@@ -742,13 +738,13 @@ const styles = StyleSheet.create({
   },
   amountText: {
     fontSize: 14,
-    fontFamily: "HindSiliguri-SemiBold",
+    fontFamily: "NotoSerifBengali-SemiBold",
     color: "#333",
     marginBottom: 2,
   },
   statusText: {
     fontSize: 12,
-    fontFamily: "HindSiliguri-Regular",
+    fontFamily: "NotoSerifBengali-Regular",
     color: "#007AFF",
   },
   historyFooter: {
